@@ -130,6 +130,16 @@
     padding: 1.1rem 1.25rem; font-size: 0.9rem; color: #2a2a2a; line-height: 1.5;
   }
   .ia-bubble strong { color: #44483a; }
+  .user-avatar {
+    width: 36px; height: 36px; flex-shrink: 0; border-radius: 999px;
+    background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+  }
+  .user-bubble {
+    background: var(--accent-soft); border: 1px solid #d8c89c; border-radius: 18px;
+    padding: 1.1rem 1.25rem; font-size: 0.9rem; color: #44483a; line-height: 1.5;
+    white-space: pre-wrap; word-break: break-word;
+  }
   .empty-state { text-align: center; color: #8a8474; padding: 3rem 1rem; font-size: 0.9rem; }
 </style>
 </head>
@@ -284,6 +294,12 @@
       <!-- ===== Columna derecha ===== -->
       <div class="space-y-4">
 
+        <!-- Burbuja Usuario (chat) -->
+        <div id="user-section" class="gap-3 justify-end" style="display: none;">
+          <div class="user-bubble flex-grow" id="user-bubble"></div>
+          <div class="user-avatar">TÚ</div>
+        </div>
+
         <!-- Burbuja IA -->
         <div class="flex gap-3" id="ia-section">
           <div class="ia-avatar">IA</div>
@@ -345,6 +361,18 @@ const refsDatalist = document.getElementById('refs-datalist');
 const formGuiada = document.getElementById('form-guiada');
 const formNL = document.getElementById('form-nl');
 const iaBubble = document.getElementById('ia-bubble');
+const userSection = document.getElementById('user-section');
+const userBubble = document.getElementById('user-bubble');
+
+function showUserMessage(text) {
+  userBubble.textContent = text;
+  userSection.style.display = 'flex';
+}
+
+function hideUserMessage() {
+  userSection.style.display = 'none';
+  userBubble.textContent = '';
+}
 const tablaEmpty = document.getElementById('tabla-empty');
 const tablaWrapper = document.getElementById('tabla-wrapper');
 const tablaBody = document.getElementById('tabla-body');
@@ -540,6 +568,7 @@ async function lanzarConsulta(payload, endpoint, btnId) {
 
 formGuiada.addEventListener('submit', e => {
   e.preventDefault();
+  hideUserMessage();
   const forma = document.querySelector('.pill[data-forma].active')?.dataset.forma || 'rectangular';
   let ancho, largo;
   if (forma === 'circular') {
@@ -560,8 +589,11 @@ formGuiada.addEventListener('submit', e => {
 
 formNL.addEventListener('submit', e => {
   e.preventDefault();
-  const q = document.getElementById('nl-query').value.trim();
+  const inputEl = document.getElementById('nl-query');
+  const q = inputEl.value.trim();
   if (!q) return;
+  showUserMessage(q);
+  inputEl.value = '';
   lanzarConsulta({ query: q }, '/api/consulta-nl', 'btn-nl');
 });
 </script>
