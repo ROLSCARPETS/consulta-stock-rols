@@ -140,6 +140,21 @@
     padding: 1.1rem 1.25rem; font-size: 0.9rem; color: #44483a; line-height: 1.5;
     white-space: pre-wrap; word-break: break-word;
   }
+  .search-pill {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    background: #fff; border: 1px solid var(--border);
+    padding: 0.55rem 1rem; border-radius: 14px; font-size: 0.875rem;
+    max-width: 100%;
+  }
+  .search-pill .icon { color: var(--accent); flex-shrink: 0; }
+  .search-pill .label {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: #8a8474; font-weight: 600; flex-shrink: 0;
+  }
+  .search-pill .value {
+    color: #2a2a2a; font-weight: 500;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
   .empty-state { text-align: center; color: #8a8474; padding: 3rem 1rem; font-size: 0.9rem; }
 </style>
 </head>
@@ -294,6 +309,15 @@
       <!-- ===== Columna derecha ===== -->
       <div class="space-y-4">
 
+        <!-- Búsqueda activa -->
+        <div id="search-context" style="display: none;">
+          <div class="search-pill">
+            <svg class="icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <span class="label">Búsqueda activa</span>
+            <span class="value" id="search-context-text"></span>
+          </div>
+        </div>
+
         <!-- Burbuja Usuario (chat) -->
         <div id="user-section" class="gap-3 justify-end" style="display: none;">
           <div class="user-bubble flex-grow" id="user-bubble"></div>
@@ -363,6 +387,8 @@ const formNL = document.getElementById('form-nl');
 const iaBubble = document.getElementById('ia-bubble');
 const userSection = document.getElementById('user-section');
 const userBubble = document.getElementById('user-bubble');
+const searchContext = document.getElementById('search-context');
+const searchContextText = document.getElementById('search-context-text');
 
 function showUserMessage(text) {
   userBubble.textContent = text;
@@ -372,6 +398,41 @@ function showUserMessage(text) {
 function hideUserMessage() {
   userSection.style.display = 'none';
   userBubble.textContent = '';
+}
+
+function fmtMeasure(n) {
+  if (n == null) return '';
+  return n === Math.trunc(n) ? `${n}` : Number(n).toFixed(2).replace('.', ',');
+}
+
+function formatSearchSummary(ref, ancho, largo) {
+  if (!ref) return null;
+  if (ancho != null && largo != null) return `${ref} · ${fmtMeasure(ancho)} × ${fmtMeasure(largo)} m`;
+  if (ancho != null) return `${ref} · ${fmtMeasure(ancho)} m ancho`;
+  if (largo != null) return `${ref} · ${fmtMeasure(largo)} m`;
+  return ref;
+}
+
+function updateSearchContext(data) {
+  let ref, ancho, largo, esProductoValido = false;
+  if (data.consulta) {
+    ({ ref, ancho, largo } = data.consulta);
+    esProductoValido = validRefs.has(ref);
+  } else if (data.parsed && data.parsed.coleccion_ambigua) {
+    ref = data.parsed.coleccion_ambigua + ' (elige color)';
+    ancho = data.parsed.ancho;
+    largo = data.parsed.largo;
+    esProductoValido = true;
+  }
+  if (!esProductoValido) {
+    searchContext.style.display = 'none';
+    return;
+  }
+  const summary = formatSearchSummary(ref, ancho, largo);
+  if (summary) {
+    searchContextText.textContent = summary;
+    searchContext.style.display = 'block';
+  }
 }
 const tablaEmpty = document.getElementById('tabla-empty');
 const tablaWrapper = document.getElementById('tabla-wrapper');
@@ -395,9 +456,11 @@ document.querySelectorAll('.pill[data-forma]').forEach(p => {
   });
 });
 
-// Catalogo para autocomplete
+// Catalogo para autocomplete + set de referencias validas
+let validRefs = new Set();
 fetch('/api/refs').then(r => r.json()).then(refs => {
   refsDatalist.innerHTML = refs.map(r => `<option value="${r}">`).join('');
+  validRefs = new Set(refs);
 });
 
 const STATUS_BADGES = {
@@ -534,6 +597,9 @@ async function lanzarConsulta(payload, endpoint, btnId) {
 
     // Mensaje del IA
     iaBubble.innerHTML = marked.parseInline(data.mensaje);
+
+    // Pildora de busqueda activa
+    updateSearchContext(data);
 
     // Si la consulta es ambigua: pintar chips de color clicables
     if (data.tipo === 'necesita_color' && data.chips_color) {
