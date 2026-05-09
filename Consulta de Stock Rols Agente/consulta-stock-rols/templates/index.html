@@ -94,6 +94,19 @@
   .badge-lanzada .dot, .badge-planif .dot {
     width: 6px; height: 6px; border-radius: 999px; background: currentColor;
   }
+  .obs-toggle { cursor: pointer; user-select: none; }
+  .obs-toggle:hover { filter: brightness(0.92); }
+  .obs-row td {
+    padding: 0 1rem 0.75rem !important;
+    border-bottom: 1px solid #f0ebdd;
+  }
+  .obs-content {
+    background: #f9f4e3; border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: 8px;
+    padding: 0.75rem 1rem; font-size: 0.85rem; color: #5b4d28; line-height: 1.5;
+  }
+  .obs-content > div + div { margin-top: 0.45rem; }
+  .obs-content strong { color: #44483a; }
   .row-highlight { background: #f8f3e3; }
   .row-highlight td:first-child { border-left: 3px solid var(--accent); padding-left: calc(1rem - 3px); }
   table { width: 100%; border-collapse: collapse; }
@@ -352,7 +365,6 @@
                   <th>Ancho</th>
                   <th>Long. no comprometida (ML)</th>
                   <th>Estado pieza</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody id="tabla-body"></tbody>
@@ -487,6 +499,21 @@ function fmtNum(n, dec) {
   return Number(n).toFixed(dec).replace('.', ',');
 }
 
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function displayEstado(estado) {
+  if (estado === 'Lanzada') return 'En fabricación';
+  return estado;
+}
+
 function renderRows(filas) {
   if (!filas || filas.length === 0) {
     tablaEmpty.textContent = 'No hay piezas que cumplan los criterios.';
@@ -502,23 +529,43 @@ function renderRows(filas) {
 
   tablaBody.innerHTML = filas.map((f, i) => {
     const cls = STATUS_BADGES[f.estado] || 'badge-correcto';
+    const estadoTxt = displayEstado(f.estado).toUpperCase();
     const ancho = f.ancho === Math.trunc(f.ancho) ? `${f.ancho}` : fmtNum(f.ancho, 1);
     const libre = fmtNum(f.longitud_no_comprometida, 2);
-    const accion = f.estado === 'Agotado'
-      ? '<a href="#" class="link-action">Avisar</a>'
-      : '<a href="#" class="link-action">Reservar</a>';
     const rowCls = i === 0 ? 'row-highlight' : '';
-    return `
+
+    const tieneObs = f.estado === 'Ver Anotaciones' && (f.obs_revision || f.obs_venta);
+    const badgeClass = `badge-status ${cls}${tieneObs ? ' obs-toggle' : ''}`;
+    const badgeAttrs = tieneObs ? ` data-toggle-obs="${i}" title="Click para ver anotaciones"` : '';
+    const hint = tieneObs ? ' <span style="font-size:0.7em;opacity:0.65;">▾</span>' : '';
+
+    let html = `
       <tr class="${rowCls}">
         <td><div class="flex items-center gap-2">${i === 0 ? '<span class="w-1.5 h-1.5 rounded-full bg-stone-700 inline-block"></span>' : '<span class="w-1.5 h-1.5 inline-block"></span>'}<span class="font-medium">${f.descripcion}</span></div></td>
         <td class="text-stone-600">${f.lote}</td>
         <td>${ancho}</td>
         <td>${libre}</td>
-        <td><span class="badge-status ${cls}"><span class="dot"></span>${f.estado.toUpperCase()}</span></td>
-        <td class="text-right">${accion}</td>
+        <td><span class="${badgeClass}"${badgeAttrs}><span class="dot"></span>${estadoTxt}${hint}</span></td>
       </tr>`;
+
+    if (tieneObs) {
+      const partes = [];
+      if (f.obs_revision) partes.push(`<div><strong>Revisión:</strong> ${escapeHtml(f.obs_revision)}</div>`);
+      if (f.obs_venta) partes.push(`<div><strong>Venta:</strong> ${escapeHtml(f.obs_venta)}</div>`);
+      html += `<tr class="obs-row hidden" data-obs-row="${i}"><td colspan="5"><div class="obs-content">${partes.join('')}</div></td></tr>`;
+    }
+
+    return html;
   }).join('');
 }
+
+tablaBody.addEventListener('click', (e) => {
+  const badge = e.target.closest('[data-toggle-obs]');
+  if (!badge) return;
+  const idx = badge.dataset.toggleObs;
+  const obsRow = tablaBody.querySelector(`tr[data-obs-row="${idx}"]`);
+  if (obsRow) obsRow.classList.toggle('hidden');
+});
 
 function renderAltEntry(e) {
   const piezas = e.piezas || [];
@@ -550,7 +597,7 @@ function renderAltEntry(e) {
                   <td class="py-1 pr-3 text-stone-700">${p.lote}</td>
                   <td class="py-1 pr-3">${ancho}</td>
                   <td class="py-1 pr-3">${libre}</td>
-                  <td class="py-1"><span class="badge-status ${cls}"><span class="dot"></span>${p.estado.toUpperCase()}</span></td>
+                  <td class="py-1"><span class="badge-status ${cls}"><span class="dot"></span>${displayEstado(p.estado).toUpperCase()}</span></td>
                 </tr>`;
             }).join('')}
           </tbody>
