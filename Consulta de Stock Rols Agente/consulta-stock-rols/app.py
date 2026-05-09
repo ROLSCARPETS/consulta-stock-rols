@@ -72,8 +72,12 @@ LOAD_TIME = time.time()
 # Helpers
 # ---------------------------------------------------------------------------
 
-def parse_natural_query(query: str) -> dict:
+def parse_natural_query(query: str, last_ref: str = None) -> dict:
     """Extrae ref + medidas (en metros) de un texto en lenguaje natural.
+
+    `last_ref` es la referencia de la consulta anterior; se usa como
+    fallback cuando la query no menciona producto explicito (ej:
+    "mira en 4x3" tras haber preguntado por Palma Icon Sand).
 
     Devuelve adicionalmente:
       - "coleccion_ambigua": str|None — si la query no apunta a un color
@@ -126,7 +130,10 @@ def parse_natural_query(query: str) -> dict:
                 colores_disponibles = matches
 
     if not ref and not coleccion_ambigua:
-        ref = query  # ultimo recurso: el script intenta su matcher difuso
+        if last_ref:
+            ref = last_ref  # contexto de la consulta anterior
+        else:
+            ref = query  # ultimo recurso: el script intenta su matcher difuso
 
     flags = re.IGNORECASE
     es_cm = bool(re.search(r"\bcm\b", nq_resto, flags))
@@ -235,9 +242,31 @@ def _ejecutar_consulta(ref, ancho, largo):
         if largo is not None and largo > max_l:
             problemas.append(f"el largo **{largo:g} m** supera la pieza máxima de **{max_l:g} m**")
         detalle = "; ".join(problemas) if problemas else "no encaja en ninguna combinación de rollo"
+
+        # Sugerir la medida factible mas cercana (recortando dimensiones excedidas).
+        sug_ancho = max(anchos) if (ancho is not None and ancho > max(anchos)) else ancho
+        sug_largo = max_l if (largo is not None and largo > max_l) else largo
+        chips_medida = []
+        if sug_ancho is not None and sug_largo is not None:
+            chips_medida.append({
+                "label": f"{sug_ancho:g} × {sug_largo:g} m",
+                "ancho": sug_ancho, "largo": sug_largo,
+            })
+        elif sug_ancho is not None:
+            chips_medida.append({
+                "label": f"{sug_ancho:g} m de ancho",
+                "ancho": sug_ancho, "largo": None,
+            })
+        elif sug_largo is not None:
+            chips_medida.append({
+                "label": f"{sug_largo:g} m de largo",
+                "ancho": None, "largo": sug_largo,
+            })
+
         mensaje = (
             f"⚠️ La medida pedida no es posible en **{col_nombre}**: {detalle}. "
-            f"Los rollos vienen en **{anchos_str}** de ancho."
+            f"Los rollos vienen en **{anchos_str}** de ancho. "
+            f"¿Quieres que mire en otra medida que sí encaje?"
         )
         return {
             "tipo": "medida_invalida",
@@ -248,6 +277,7 @@ def _ejecutar_consulta(ref, ancho, largo):
             "n_fabricacion": 0,
             "alternativas": None,
             "validacion": validacion,
+            "chips_medida": chips_medida,
             "consulta": {"ref": ref, "ancho": ancho, "largo": largo},
         }
 
@@ -353,10 +383,11 @@ def api_consulta():
 def api_consulta_nl():
     data = request.get_json(force=True)
     query = (data.get("query") or "").strip()
+    last_ref = (data.get("last_ref") or "").strip() or None
     if not query:
         return jsonify({"error": "Falta la consulta"}), 400
 
-    parsed = parse_natural_query(query)
+    parsed = parse_natural_query(query, last_ref=last_ref)
 
     # Caso ambiguo: el cliente nombro una coleccion sin especificar color
     if parsed.get("coleccion_ambigua"):

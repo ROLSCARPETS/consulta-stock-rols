@@ -425,6 +425,10 @@ function formatSearchSummary(ref, ancho, largo) {
   return ref;
 }
 
+// Ultima referencia valida; se envia al backend en consultas NL para
+// que "mira en 4x3" tras "palma icon sand" siga refiriendose al mismo producto.
+let lastRef = null;
+
 function updateSearchContext(data) {
   let ref = null, ancho, largo;
 
@@ -438,6 +442,7 @@ function updateSearchContext(data) {
     // como escribir "palma icon" sin color), luego via el ref tal cual.
     const filaDesc = data.filas && data.filas[0] && data.filas[0].descripcion;
     ref = findCanonicalRef(filaDesc) || findCanonicalRef(data.consulta.ref);
+    if (ref) lastRef = ref;
   }
 
   if (!ref) {
@@ -675,6 +680,21 @@ async function lanzarConsulta(payload, endpoint, btnId) {
       });
     }
 
+    // Medida invalida: pintar chip(s) con la medida factible mas cercana
+    if (data.tipo === 'medida_invalida' && data.chips_medida && data.chips_medida.length) {
+      const refSugerencia = findCanonicalRef(data.consulta && data.consulta.ref) || (data.consulta && data.consulta.ref);
+      const chipsHTML = data.chips_medida.map((c, idx) =>
+        `<button type="button" class="chip-medida px-3 py-1.5 rounded-full bg-amber-100 hover:bg-amber-200 border border-amber-300 text-sm transition" data-idx="${idx}">${c.label}</button>`
+      ).join('');
+      iaBubble.innerHTML += `<div class="mt-3 flex flex-wrap gap-2">${chipsHTML}</div>`;
+      iaBubble.querySelectorAll('.chip-medida').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const c = data.chips_medida[parseInt(btn.dataset.idx, 10)];
+          lanzarConsulta({ ref: refSugerencia, ancho: c.ancho, largo: c.largo, unidad: 'm' }, '/api/consulta', 'btn-nl');
+        });
+      });
+    }
+
     // Tabla
     renderRows(data.filas || []);
 
@@ -717,7 +737,7 @@ formNL.addEventListener('submit', e => {
   if (!q) return;
   showUserMessage(q);
   inputEl.value = '';
-  lanzarConsulta({ query: q }, '/api/consulta-nl', 'btn-nl');
+  lanzarConsulta({ query: q, last_ref: lastRef }, '/api/consulta-nl', 'btn-nl');
 });
 </script>
 
