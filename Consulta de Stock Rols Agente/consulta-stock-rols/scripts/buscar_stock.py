@@ -238,8 +238,13 @@ def validar_medida_contra_coleccion(coleccion, ancho_pedido, largo_pedido, colec
         return {"coleccion": coleccion, "conocida": False}
     anchos_rollo = sorted(spec["anchos_rollo"])
     max_w, max_l = spec["max_alfombra"]
-    a_dir = next((a for a in anchos_rollo if a >= ancho_pedido), None)
-    a_rot = next((a for a in anchos_rollo if a >= largo_pedido), None)
+    a_dir = next((a for a in anchos_rollo if a >= ancho_pedido), None) if ancho_pedido is not None else None
+    a_rot = next((a for a in anchos_rollo if a >= largo_pedido), None) if largo_pedido is not None else None
+    encaja_directo = (ancho_pedido is None) or (a_dir is not None)
+    encaja_rotando = (
+        largo_pedido is not None and a_rot is not None
+        and (ancho_pedido is None or ancho_pedido <= max_l)
+    )
     return {
         "coleccion": coleccion,
         "conocida": True,
@@ -252,8 +257,8 @@ def validar_medida_contra_coleccion(coleccion, ancho_pedido, largo_pedido, colec
         "nota": spec.get("nota"),
         "ancho_rollo_directo": a_dir,
         "ancho_rollo_rotando": a_rot,
-        "encaja_directo": a_dir is not None,
-        "encaja_rotando": a_rot is not None and ancho_pedido <= max_l,
+        "encaja_directo": encaja_directo,
+        "encaja_rotando": encaja_rotando,
     }
 
 
@@ -340,9 +345,10 @@ def consulta_completa(ref, ancho, largo, piezas_stock, piezas_fab,
         "alternativas": None,
     }
 
-    # 1) Validacion de coleccion
+    # 1) Validacion de coleccion (siempre que sepamos la coleccion, aunque
+    # falte alguna medida — basta con un ancho excesivo para invalidar).
     coleccion = detectar_coleccion(ref, colecciones) if ref else None
-    if coleccion and ancho is not None and largo is not None:
+    if coleccion:
         out["validacion"] = validar_medida_contra_coleccion(
             coleccion, ancho, largo, colecciones
         )

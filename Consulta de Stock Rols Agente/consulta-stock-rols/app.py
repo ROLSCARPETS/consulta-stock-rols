@@ -218,6 +218,39 @@ def _ejecutar_consulta(ref, ancho, largo):
     resultado = bs.consulta_completa(
         ref, ancho, largo, PIEZAS, PIEZAS_FAB, COLECCIONES, ALTERNATIVAS, limite=20
     )
+
+    # Si la medida pedida no encaja en la coleccion (ni directo ni rotando),
+    # avisar de inmediato: tiene mas valor que mostrar piezas que no servirian.
+    validacion = resultado.get("validacion")
+    if (validacion and validacion.get("conocida")
+            and not validacion["encaja_directo"]
+            and not validacion["encaja_rotando"]):
+        anchos = validacion["anchos_rollo_disponibles"]
+        max_w, max_l = validacion["max_alfombra"]
+        anchos_str = " y ".join(f"{a:g} m" for a in anchos)
+        col_nombre = validacion["coleccion"].title()
+        problemas = []
+        if ancho is not None and ancho > max(anchos):
+            problemas.append(f"el ancho **{ancho:g} m** supera el rollo máximo de **{max(anchos):g} m**")
+        if largo is not None and largo > max_l:
+            problemas.append(f"el largo **{largo:g} m** supera la pieza máxima de **{max_l:g} m**")
+        detalle = "; ".join(problemas) if problemas else "no encaja en ninguna combinación de rollo"
+        mensaje = (
+            f"⚠️ La medida pedida no es posible en **{col_nombre}**: {detalle}. "
+            f"Los rollos vienen en **{anchos_str}** de ancho."
+        )
+        return {
+            "tipo": "medida_invalida",
+            "mensaje": mensaje,
+            "markdown": "",
+            "filas": [],
+            "n_stock": 0,
+            "n_fabricacion": 0,
+            "alternativas": None,
+            "validacion": validacion,
+            "consulta": {"ref": ref, "ancho": ancho, "largo": largo},
+        }
+
     markdown = bs.render_markdown(resultado)
 
     if resultado["stock"]:
