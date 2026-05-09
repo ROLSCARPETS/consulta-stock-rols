@@ -295,6 +295,9 @@ def _ejecutar_consulta(ref, ancho, largo):
     # Mensaje breve y conversacional para la "burbuja" del asistente
     n_stock = len(resultado["stock"])
     n_fab = len((resultado.get("fabricacion") or {}).get("piezas", []))
+    alts = resultado.get("alternativas") or {}
+    hay_alts = bool(alts.get("found") and not alts.get("sin_alternativas"))
+
     if tipo == "stock":
         mejor = resultado["stock"][0]
         mensaje = (
@@ -307,19 +310,21 @@ def _ejecutar_consulta(ref, ancho, largo):
         mensaje = (
             f"No hay stock terminado, pero hay **{n_fab} {'pieza' if n_fab == 1 else 'piezas'} en fabricación**. "
             f"La más cercana es {mejor['lote']} ({mejor['longitud_no_comprometida']:.2f} m libres, "
-            f"disponible ~{mejor['fecha_disponibilidad']}). "
-            f"¿Quieres que mire también **alternativas que sí tengamos en stock**?"
+            f"disponible ~{mejor['fecha_disponibilidad']})."
         )
+        if hay_alts:
+            mensaje += " ¿Quieres que mire también **alternativas que sí tengamos en stock**?"
     elif tipo == "todas_comprometidas":
         mensaje = (
             "No hay stock terminado y **toda la fabricación en curso de esa referencia "
-            "ya está reservada**. ¿Quieres que mire alternativas similares?"
+            "ya está reservada**."
         )
+        if hay_alts:
+            mensaje += " ¿Quieres que mire alternativas similares?"
     else:
-        mensaje = (
-            f"No hay stock terminado de **{ref}** ni fabricación dada de alta. "
-            f"¿Quieres que mire referencias similares?"
-        )
+        mensaje = f"No hay stock terminado de **{ref}** ni fabricación dada de alta."
+        if hay_alts:
+            mensaje += " ¿Quieres que mire referencias similares?"
 
     return {
         "tipo": tipo,

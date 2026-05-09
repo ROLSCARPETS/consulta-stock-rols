@@ -153,19 +153,23 @@
     padding: 1.1rem 1.25rem; font-size: 0.9rem; color: #44483a; line-height: 1.5;
     white-space: pre-wrap; word-break: break-word;
   }
+  #search-context {
+    position: sticky; top: 1rem; z-index: 5;
+  }
   .search-pill {
-    display: inline-flex; align-items: center; gap: 0.55rem;
-    background: #fff; border: 1px solid var(--border);
-    padding: 0.55rem 1rem; border-radius: 14px; font-size: 0.875rem;
+    display: inline-flex; align-items: center; gap: 0.65rem;
+    background: var(--accent); border: none;
+    padding: 0.7rem 1.15rem; border-radius: 14px; font-size: 0.9rem;
+    box-shadow: 0 6px 20px -8px rgba(68, 72, 58, 0.45);
     max-width: 100%;
   }
-  .search-pill .icon { color: var(--accent); flex-shrink: 0; }
+  .search-pill .icon { color: rgba(255,255,255,0.9); flex-shrink: 0; }
   .search-pill .label {
-    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em;
-    color: #8a8474; font-weight: 600; flex-shrink: 0;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.78); font-weight: 600; flex-shrink: 0;
   }
   .search-pill .value {
-    color: #2a2a2a; font-weight: 500;
+    color: #fff; font-weight: 600;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .empty-state { text-align: center; color: #8a8474; padding: 3rem 1rem; font-size: 0.9rem; }
@@ -429,6 +433,46 @@ function formatSearchSummary(ref, ancho, largo) {
 // que "mira en 4x3" tras "palma icon sand" siga refiriendose al mismo producto.
 let lastRef = null;
 
+// Ultima respuesta completa: usado para responder a "si" tras una oferta
+// de alternativas, sin tener que hacer una nueva consulta (que perderia
+// las medidas).
+let lastResponseData = null;
+
+const TIPOS_OFRECEN_ALTERNATIVAS = new Set(['fabricacion', 'todas_comprometidas', 'sin_stock']);
+const AFFIRMATIVE_RE = /^(s[ií]|vale|okay?|dale|claro|venga|adelante|hazlo|porfa(vor)?)(\s.{0,30})?$/;
+
+function isAffirmative(text) {
+  const t = text.trim().toLowerCase().replace(/[.!?,;:]+$/g, '');
+  return AFFIRMATIVE_RE.test(t);
+}
+
+function respondToAlternativasOffer(prev) {
+  const alts = prev.alternativas;
+  const consulta = prev.consulta || {};
+  const refRaw = consulta.ref || '';
+  const ref = findCanonicalRef(refRaw) || refRaw;
+
+  if (!alts || !alts.found || alts.sin_alternativas) {
+    iaBubble.innerHTML = `No tenemos alternativas registradas para <strong>${escapeHtml(ref)}</strong>.`;
+    altsSection.classList.add('hidden');
+    return;
+  }
+  const todas = [...(alts.tier_1 || []), ...(alts.tier_2 || [])];
+  const conStock = todas.filter(e => e.tiene_stock).length;
+  const total = todas.length;
+  if (total === 0) {
+    iaBubble.innerHTML = `No hay alternativas para <strong>${escapeHtml(ref)}</strong>.`;
+    altsSection.classList.add('hidden');
+    return;
+  }
+  if (conStock === 0) {
+    iaBubble.innerHTML = `Hay ${total} alternativa${total === 1 ? '' : 's'} para <strong>${escapeHtml(ref)}</strong> pero <strong>ninguna tiene stock</strong> para tu medida.`;
+  } else {
+    iaBubble.innerHTML = `Aquí tienes las alternativas para <strong>${escapeHtml(ref)}</strong>: <strong>${conStock} de ${total}</strong> con stock para tu medida.`;
+  }
+  renderAlternativas(alts);
+}
+
 function updateSearchContext(data) {
   let ref = null, ancho, largo;
 
@@ -663,6 +707,9 @@ async function lanzarConsulta(payload, endpoint, btnId) {
     // Pildora de busqueda activa
     updateSearchContext(data);
 
+    // Recordar respuesta para poder responder a "si" tras oferta de alternativas
+    lastResponseData = data;
+
     // Si la consulta es ambigua: pintar chips de color clicables
     if (data.tipo === 'necesita_color' && data.chips_color) {
       const chipsHTML = data.chips_color.map(c =>
@@ -737,6 +784,17 @@ formNL.addEventListener('submit', e => {
   if (!q) return;
   showUserMessage(q);
   inputEl.value = '';
+
+  // "si" tras oferta de alternativas → responder localmente con la info
+  // que ya tenemos, sin tocar el backend (asi no perdemos las medidas).
+  if (lastResponseData
+      && TIPOS_OFRECEN_ALTERNATIVAS.has(lastResponseData.tipo)
+      && isAffirmative(q)) {
+    respondToAlternativasOffer(lastResponseData);
+    lastResponseData = null;  // ya consumido
+    return;
+  }
+
   lanzarConsulta({ query: q, last_ref: lastRef }, '/api/consulta-nl', 'btn-nl');
 });
 </script>
