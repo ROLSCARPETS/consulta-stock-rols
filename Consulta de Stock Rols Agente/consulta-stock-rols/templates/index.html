@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Consulta de stock — Rols</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg-page: #f4f0e8;
+    --bg-card: #ffffff;
+    --bg-sidebar: #44483a;
+    --bg-sidebar-hover: #565a4b;
+    --bg-sidebar-active: #5d6150;
+    --text-sidebar: #d6d4c8;
+    --text-sidebar-active: #f0ecdf;
+    --accent: #b39962;
+    --accent-hover: #a08956;
+    --accent-soft: #e8dfc9;
+    --border: #e7e1d3;
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-page);
+    color: #2a2a2a;
+  }
+  .sidebar { background: var(--bg-sidebar); color: var(--text-sidebar); }
+  .sidebar a {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.55rem 0.85rem; border-radius: 0.5rem;
+    font-size: 0.875rem; color: var(--text-sidebar);
+    transition: background 0.15s;
+  }
+  .sidebar a:hover { background: var(--bg-sidebar-hover); }
+  .sidebar a.active { background: var(--bg-sidebar-active); color: var(--text-sidebar-active); font-weight: 500; }
+  .sidebar a .check {
+    width: 16px; height: 16px; border: 1.5px solid #888879; border-radius: 4px;
+    display: inline-block; flex-shrink: 0;
+  }
+  .sidebar a.active .check { background: var(--accent); border-color: var(--accent); }
+  .btn-accent {
+    background: var(--accent); color: #fff; border-radius: 999px;
+    padding: 0.55rem 1.1rem; font-size: 0.875rem; font-weight: 500;
+    transition: background 0.15s;
+  }
+  .btn-accent:hover { background: var(--accent-hover); }
+  .btn-outline {
+    background: transparent; border: 1px solid #d4cfc0; color: var(--text-sidebar);
+    border-radius: 999px; padding: 0.55rem 1.1rem; font-size: 0.875rem;
+    transition: background 0.15s;
+  }
+  .btn-outline:hover { background: var(--bg-sidebar-hover); }
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; }
+  .input-line {
+    width: 100%; padding: 0.7rem 0.95rem; border-radius: 14px;
+    border: 1px solid var(--border); background: #fff; font-size: 0.9rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input-line:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(179,153,98,0.15); }
+  .step-badge {
+    width: 28px; height: 28px; border-radius: 999px;
+    background: #f1ead7; color: #6d6240;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 600; flex-shrink: 0;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.45rem 0.95rem; border-radius: 999px;
+    font-size: 0.85rem; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border); background: #fff;
+    transition: all 0.15s;
+  }
+  .pill .swatch {
+    width: 14px; height: 14px; border-radius: 3px;
+    background: linear-gradient(135deg,#c5a877 30%, #fff 30% 35%, #c5a877 35%);
+  }
+  .pill.active { background: var(--accent-soft); border-color: var(--accent); color: #5b4d28; }
+  .badge-status {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.25rem 0.65rem; border-radius: 999px;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .badge-correcto { background: #d6efd6; color: #1f5d2c; }
+  .badge-saldo { background: #e8dfc9; color: #6b5b2b; }
+  .badge-aprestado { background: #ddeaf3; color: #294f6b; }
+  .badge-anotaciones { background: #f3e5d0; color: #6b4a25; }
+  .badge-agotado { background: #f3d4d4; color: #6f1f1f; }
+  .badge-lanzada { background: #d6e4f3; color: #2c4a6b; }
+  .badge-planif { background: #ede4f3; color: #4a2c6b; }
+  .badge-correcto .dot, .badge-saldo .dot, .badge-aprestado .dot,
+  .badge-anotaciones .dot, .badge-agotado .dot,
+  .badge-lanzada .dot, .badge-planif .dot {
+    width: 6px; height: 6px; border-radius: 999px; background: currentColor;
+  }
+  .row-highlight { background: #f8f3e3; }
+  .row-highlight td:first-child { border-left: 3px solid var(--accent); padding-left: calc(1rem - 3px); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-size: 0.7rem; font-weight: 600;
+    color: #6d6859; padding: 0.85rem 1rem; letter-spacing: 0.05em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 0.95rem 1rem; font-size: 0.875rem; color: #2a2a2a;
+    border-bottom: 1px solid #f0ebdd;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .link-action { color: #6d6240; font-size: 0.8rem; text-decoration: underline; text-underline-offset: 3px; }
+  .link-action:hover { color: var(--accent); }
+  .breadcrumb { font-size: 0.85rem; color: #8a8474; }
+  .breadcrumb a { color: #8a8474; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .sync-pill {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    background: #fff; border: 1px solid var(--border);
+    padding: 0.4rem 0.85rem; border-radius: 999px; font-size: 0.78rem; color: #6d6859;
+  }
+  .sync-pill .dot { width: 8px; height: 8px; background: #5cba78; border-radius: 999px; }
+  .spinner { border: 2px solid #eee; border-top: 2px solid var(--accent); border-radius: 50%; width: 14px; height: 14px; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ia-avatar {
+    width: 36px; height: 36px; flex-shrink: 0; border-radius: 999px;
+    background: #eee6d0; color: #6b5b2b; display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+  }
+  .ia-bubble {
+    background: #fff; border: 1px solid var(--border); border-radius: 18px;
+    padding: 1.1rem 1.25rem; font-size: 0.9rem; color: #2a2a2a; line-height: 1.5;
+  }
+  .ia-bubble strong { color: #44483a; }
+  .empty-state { text-align: center; color: #8a8474; padding: 3rem 1rem; font-size: 0.9rem; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="flex min-h-screen">
+
+  <!-- ======================== SIDEBAR ======================== -->
+  <aside class="sidebar w-64 flex-shrink-0 flex flex-col px-4 py-6">
+    <div class="px-2 mb-8">
+      <div class="text-2xl font-bold tracking-wider text-stone-100">ROLS</div>
+    </div>
+
+    <nav class="space-y-1 flex-grow">
+      <a href="#"><span class="check"></span>Inicio</a>
+      <a href="#"><span class="check"></span>Pedidos realizados</a>
+      <a href="#"><span class="check"></span>Presupuestos en borrador</a>
+      <a href="#"><span class="check"></span>Muestras</a>
+      <a href="#" class="active"><span class="check"></span>Consulta de stock</a>
+      <a href="#"><span class="check"></span>Tu tarifa</a>
+    </nav>
+
+    <div class="space-y-2 mb-6">
+      <button class="btn-outline w-full">Calcula tu presupuesto</button>
+      <button class="btn-outline w-full">Solicita nuevas muestras</button>
+    </div>
+
+    <div class="space-y-1 pt-4 border-t border-stone-700/50">
+      <a href="#"><span class="check"></span>Configuración</a>
+      <a href="#"><span class="check"></span>Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <!-- ======================== MAIN ======================== -->
+  <main class="flex-grow px-10 py-8 overflow-x-hidden">
+
+    <!-- Top bar -->
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <p class="breadcrumb mb-1">
+          <a href="#">Inicio</a> · <span>Consulta de stock</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="sync-pill"><span class="dot"></span>Stock sincronizado · {{ sync_time }}</span>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-3xl font-light text-stone-800 mb-2">
+      Consulta de <span class="font-medium relative">stock<span class="absolute left-0 -bottom-1 w-full h-0.5 bg-stone-800"></span></span>
+    </h1>
+    <p class="text-stone-600 max-w-2xl mb-8">
+      Tienes <strong>dos formas</strong> de consultar disponibilidad: rellena el formulario con modelo, forma y medidas, o pregúntale directamente al asistente en lenguaje natural.
+    </p>
+
+    <!-- Grid 2 columnas -->
+    <div class="grid lg:grid-cols-2 gap-6">
+
+      <!-- ===== Columna izquierda ===== -->
+      <div class="space-y-6">
+
+        <!-- Card 1: Busqueda guiada -->
+        <div class="card p-7">
+          <div class="flex items-start gap-3 mb-5">
+            <div class="step-badge">1</div>
+            <div>
+              <h2 class="text-lg font-semibold text-stone-800">Búsqueda guiada</h2>
+              <p class="text-sm text-stone-500">Filtra por alfombra, forma y medidas</p>
+            </div>
+          </div>
+
+          <form id="form-guiada" class="space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Elige tu alfombra</label>
+              <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <input type="text" id="ref" list="refs-datalist" autocomplete="off" required
+                       placeholder="Buscar..."
+                       class="input-line pl-10" />
+                <datalist id="refs-datalist"></datalist>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Elige la forma</label>
+              <div class="flex gap-3">
+                <button type="button" class="pill active" data-forma="rectangular">
+                  <span class="swatch"></span>Rectangular
+                </button>
+                <button type="button" class="pill" data-forma="circular">
+                  <span class="w-3.5 h-3.5 rounded-full border-2 border-stone-400"></span>Circular
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Medidas totales útiles</label>
+              <div id="medidas-rectangular" class="grid grid-cols-2 gap-3">
+                <div>
+                  <input type="number" id="ancho" min="0" step="1" placeholder="Introduce el ancho en cm"
+                         class="input-line" />
+                  <p class="text-xs text-stone-400 mt-1.5">⊙ Ancho · max — cm</p>
+                </div>
+                <div>
+                  <input type="number" id="largo" min="0" step="1" placeholder="Introduce el largo en cm"
+                         class="input-line" />
+                  <p class="text-xs text-stone-400 mt-1.5">⊙ Largo · max — cm</p>
+                </div>
+              </div>
+              <div id="medidas-circular" class="hidden">
+                <input type="number" id="diametro" min="0" step="1" placeholder="Introduce el diámetro en cm"
+                       class="input-line" />
+                <p class="text-xs text-stone-400 mt-1.5">⊙ Diámetro · max — cm</p>
+              </div>
+            </div>
+
+            <div class="flex justify-end pt-1">
+              <button type="submit" id="btn-guiada" class="btn-accent flex items-center gap-2">
+                <span id="btn-guiada-text">Consultar stock →</span>
+                <span id="btn-guiada-spinner" class="spinner hidden"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Card 2: Chat NL -->
+        <div class="card p-7">
+          <div class="flex items-start gap-3 mb-5">
+            <div class="step-badge">2</div>
+            <div>
+              <h2 class="text-lg font-semibold text-stone-800">Pregunta al asistente directamente</h2>
+              <p class="text-sm text-stone-500">Escribe tu consulta en lenguaje natural y te responderá en el panel de la derecha.</p>
+            </div>
+          </div>
+
+          <form id="form-nl" class="flex gap-2">
+            <div class="relative flex-grow">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+              <input type="text" id="nl-query" autocomplete="off"
+                     placeholder="Ej. ¿Tienes más de 30 ML en LUNA PLATINIUM?"
+                     class="input-line pl-10" />
+            </div>
+            <button type="submit" id="btn-nl" class="btn-accent flex items-center gap-2 whitespace-nowrap">
+              <span id="btn-nl-text">Enviar →</span>
+              <span id="btn-nl-spinner" class="spinner hidden"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ===== Columna derecha ===== -->
+      <div class="space-y-4">
+
+        <!-- Burbuja IA -->
+        <div class="flex gap-3" id="ia-section">
+          <div class="ia-avatar">IA</div>
+          <div class="ia-bubble flex-grow" id="ia-bubble">
+            <p class="text-stone-500">Aquí verás la respuesta del asistente cuando lances una consulta. Puedes usar el formulario o escribir en lenguaje natural.</p>
+          </div>
+        </div>
+
+        <!-- Card tabla -->
+        <div class="card overflow-hidden">
+          <div class="px-6 py-4 border-b border-stone-200 flex justify-between items-center">
+            <h3 class="text-xs font-semibold text-stone-600 tracking-wider uppercase">Piezas disponibles para completar la consulta</h3>
+            <span id="tabla-vista-toggle" class="hidden text-xs text-stone-500"></span>
+          </div>
+
+          <div id="tabla-empty" class="empty-state">
+            Lanza una consulta para ver las piezas disponibles.
+          </div>
+
+          <div id="tabla-wrapper" class="hidden overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Descripción</th>
+                  <th>Nº Lote</th>
+                  <th>Ancho</th>
+                  <th>Long. no comprometida (ML)</th>
+                  <th>Estado pieza</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabla-body"></tbody>
+            </table>
+          </div>
+
+          <div id="tabla-footer" class="hidden px-6 py-3 border-t border-stone-200 flex justify-between items-center">
+            <span class="text-xs text-stone-500" id="tabla-conteo"></span>
+            <a href="#" class="link-action" id="tabla-ver-todas">Ver todas →</a>
+          </div>
+        </div>
+
+        <!-- Alternativas -->
+        <div id="alts-section" class="hidden card p-5 bg-amber-50/40 border-amber-200">
+          <h4 class="text-sm font-semibold text-amber-900 mb-3">Alternativas si el cliente acepta</h4>
+          <div id="alts-content" class="text-sm text-stone-700 space-y-2"></div>
+        </div>
+
+        <!-- Error -->
+        <div id="error-box" class="hidden card p-4 bg-red-50 border-red-200 text-sm text-red-700"></div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const refsDatalist = document.getElementById('refs-datalist');
+const formGuiada = document.getElementById('form-guiada');
+const formNL = document.getElementById('form-nl');
+const iaBubble = document.getElementById('ia-bubble');
+const tablaEmpty = document.getElementById('tabla-empty');
+const tablaWrapper = document.getElementById('tabla-wrapper');
+const tablaBody = document.getElementById('tabla-body');
+const tablaFooter = document.getElementById('tabla-footer');
+const tablaConteo = document.getElementById('tabla-conteo');
+const altsSection = document.getElementById('alts-section');
+const altsContent = document.getElementById('alts-content');
+const errorBox = document.getElementById('error-box');
+
+// Pills de forma — alternan medidas (rectangular = ancho+largo, circular = diametro)
+const medRect = document.getElementById('medidas-rectangular');
+const medCirc = document.getElementById('medidas-circular');
+document.querySelectorAll('.pill[data-forma]').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.pill[data-forma]').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    const esCirc = p.dataset.forma === 'circular';
+    medRect.classList.toggle('hidden', esCirc);
+    medCirc.classList.toggle('hidden', !esCirc);
+  });
+});
+
+// Catalogo para autocomplete
+fetch('/api/refs').then(r => r.json()).then(refs => {
+  refsDatalist.innerHTML = refs.map(r => `<option value="${r}">`).join('');
+});
+
+const STATUS_BADGES = {
+  'Correcto': 'badge-correcto',
+  'Saldo': 'badge-saldo',
+  'Aprestado': 'badge-aprestado',
+  'Ver Anotaciones': 'badge-anotaciones',
+  'Agotado': 'badge-agotado',
+  'Lanzada': 'badge-lanzada',
+  'Planif. en firme': 'badge-planif',
+};
+
+function fmtNum(n, dec) {
+  return Number(n).toFixed(dec).replace('.', ',');
+}
+
+function renderRows(filas) {
+  if (!filas || filas.length === 0) {
+    tablaEmpty.textContent = 'No hay piezas que cumplan los criterios.';
+    tablaEmpty.classList.remove('hidden');
+    tablaWrapper.classList.add('hidden');
+    tablaFooter.classList.add('hidden');
+    return;
+  }
+  tablaEmpty.classList.add('hidden');
+  tablaWrapper.classList.remove('hidden');
+  tablaFooter.classList.remove('hidden');
+  tablaConteo.textContent = `Mostrando ${filas.length} pieza${filas.length === 1 ? '' : 's'}`;
+
+  tablaBody.innerHTML = filas.map((f, i) => {
+    const cls = STATUS_BADGES[f.estado] || 'badge-correcto';
+    const ancho = f.ancho === Math.trunc(f.ancho) ? `${f.ancho}` : fmtNum(f.ancho, 1);
+    const libre = fmtNum(f.longitud_no_comprometida, 2);
+    const accion = f.estado === 'Agotado'
+      ? '<a href="#" class="link-action">Avisar</a>'
+      : '<a href="#" class="link-action">Reservar</a>';
+    const rowCls = i === 0 ? 'row-highlight' : '';
+    return `
+      <tr class="${rowCls}">
+        <td><div class="flex items-center gap-2">${i === 0 ? '<span class="w-1.5 h-1.5 rounded-full bg-stone-700 inline-block"></span>' : '<span class="w-1.5 h-1.5 inline-block"></span>'}<span class="font-medium">${f.descripcion}</span></div></td>
+        <td class="text-stone-600">${f.lote}</td>
+        <td>${ancho}</td>
+        <td>${libre}</td>
+        <td><span class="badge-status ${cls}"><span class="dot"></span>${f.estado.toUpperCase()}</span></td>
+        <td class="text-right">${accion}</td>
+      </tr>`;
+  }).join('');
+}
+
+function renderAltEntry(e) {
+  const piezas = e.piezas || [];
+  const tieneStock = e.tiene_stock;
+  const headerCls = tieneStock ? 'text-emerald-800' : 'text-stone-500';
+  const indicador = tieneStock
+    ? `<span class="text-xs text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">${piezas.length} en stock</span>`
+    : `<span class="text-xs text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full">sin stock para esta medida</span>`;
+  let tablaHTML = '';
+  if (tieneStock) {
+    tablaHTML = `
+      <div class="mt-2 ml-1 overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-stone-500">
+              <th class="text-left py-1 pr-3 font-medium">Lote</th>
+              <th class="text-left py-1 pr-3 font-medium">Ancho</th>
+              <th class="text-left py-1 pr-3 font-medium">Long. no comprometida</th>
+              <th class="text-left py-1 font-medium">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${piezas.map((p, i) => {
+              const cls = STATUS_BADGES[p.estado] || 'badge-correcto';
+              const ancho = p.ancho === Math.trunc(p.ancho) ? `${p.ancho} m` : `${fmtNum(p.ancho,1)} m`;
+              const libre = `${fmtNum(p.longitud_no_comprometida, 2)} m`;
+              return `
+                <tr class="${i === 0 ? 'font-medium' : ''}">
+                  <td class="py-1 pr-3 text-stone-700">${p.lote}</td>
+                  <td class="py-1 pr-3">${ancho}</td>
+                  <td class="py-1 pr-3">${libre}</td>
+                  <td class="py-1"><span class="badge-status ${cls}"><span class="dot"></span>${p.estado.toUpperCase()}</span></td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+  return `
+    <div class="${tieneStock ? '' : 'opacity-70'}">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="font-semibold ${headerCls}">${e.ref}</span>
+        ${indicador}
+        ${e.nota ? `<span class="text-xs text-stone-500">— ${e.nota}</span>` : ''}
+      </div>
+      ${tablaHTML}
+    </div>`;
+}
+
+function renderAlternativas(alts) {
+  if (!alts || !alts.found || alts.sin_alternativas) {
+    altsSection.classList.add('hidden');
+    return;
+  }
+  let html = '';
+  if (alts.tier_1 && alts.tier_1.length) {
+    html += '<div><div class="font-medium text-stone-900 mb-2 text-sm uppercase tracking-wider">Tier I · misma familia, otro diseño</div><div class="space-y-3">';
+    alts.tier_1.forEach(e => { html += renderAltEntry(e); });
+    html += '</div></div>';
+  }
+  if (alts.tier_2 && alts.tier_2.length) {
+    html += '<div class="mt-4"><div class="font-medium text-stone-900 mb-2 text-sm uppercase tracking-wider">Tier II · otra construcción / colorido similar</div><div class="space-y-3">';
+    alts.tier_2.forEach(e => { html += renderAltEntry(e); });
+    html += '</div></div>';
+  }
+  altsContent.innerHTML = html;
+  altsSection.classList.remove('hidden');
+}
+
+function setLoading(btnId, on) {
+  document.getElementById(btnId + '-text').style.opacity = on ? '0.7' : '1';
+  document.getElementById(btnId + '-spinner').classList.toggle('hidden', !on);
+}
+
+async function lanzarConsulta(payload, endpoint, btnId) {
+  errorBox.classList.add('hidden');
+  setLoading(btnId, true);
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error en la consulta');
+
+    // Mensaje del IA
+    iaBubble.innerHTML = marked.parseInline(data.mensaje);
+
+    // Si la consulta es ambigua: pintar chips de color clicables
+    if (data.tipo === 'necesita_color' && data.chips_color) {
+      const chipsHTML = data.chips_color.map(c =>
+        `<button type="button" class="chip-color px-3 py-1.5 rounded-full bg-stone-100 hover:bg-amber-100 border border-stone-200 hover:border-amber-300 text-sm transition" data-ref="${c.ref}">${c.label}</button>`
+      ).join('');
+      iaBubble.innerHTML += `<div class="mt-3 flex flex-wrap gap-2">${chipsHTML}</div>`;
+      iaBubble.querySelectorAll('.chip-color').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ref = btn.dataset.ref;
+          const ancho = data.consulta_original?.ancho;
+          const largo = data.consulta_original?.largo;
+          // Lanzamos consulta directa con la ref completa
+          lanzarConsulta({ ref: ref, ancho: ancho, largo: largo, unidad: 'm' }, '/api/consulta', 'btn-nl');
+        });
+      });
+    }
+
+    // Tabla
+    renderRows(data.filas || []);
+
+    // Alternativas
+    renderAlternativas(data.alternativas);
+
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.classList.remove('hidden');
+  } finally {
+    setLoading(btnId, false);
+  }
+}
+
+formGuiada.addEventListener('submit', e => {
+  e.preventDefault();
+  const forma = document.querySelector('.pill[data-forma].active')?.dataset.forma || 'rectangular';
+  let ancho, largo;
+  if (forma === 'circular') {
+    const d = document.getElementById('diametro').value || null;
+    // Para una alfombra circular, el rollo debe tener al menos el diametro
+    // de ancho y se corta una pieza de al menos el diametro de largo.
+    ancho = d;
+    largo = d;
+  } else {
+    ancho = document.getElementById('ancho').value || null;
+    largo = document.getElementById('largo').value || null;
+  }
+  lanzarConsulta({
+    ref: document.getElementById('ref').value,
+    ancho, largo, unidad: 'cm',
+  }, '/api/consulta', 'btn-guiada');
+});
+
+formNL.addEventListener('submit', e => {
+  e.preventDefault();
+  const q = document.getElementById('nl-query').value.trim();
+  if (!q) return;
+  lanzarConsulta({ query: q }, '/api/consulta-nl', 'btn-nl');
+});
+</script>
+
+</body>
+</html>

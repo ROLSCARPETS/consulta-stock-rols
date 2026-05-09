@@ -1,0 +1,620 @@
+{
+  "Maya Craft Coconut": {
+    "tier_1": [
+      {
+        "ref": "Maya Lite Coconut",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Coconut",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Coconut",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Coconut",
+        "nota": "Nudo más grueso con mismo colorido"
+      },
+      {
+        "ref": "Terra Serengueti Coconut",
+        "nota": "Nudo más grueso con mismo colorido"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Craft Oat": {
+    "tier_1": [
+      {
+        "ref": "Maya Lite Oat",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Oat",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Oat",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Oat",
+        "nota": "Nudo más grueso con mismo colorido"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Craft Licorice": {
+    "tier_1": [
+      {
+        "ref": "Maya Gradient Licorice",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Licorice",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Nut",
+        "nota": "Nudo más grueso con color similar"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Craft Linen": {
+    "tier_1": [
+      {
+        "ref": "Maya Gradient Linen",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Linen",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Maya Lite Coconut": {
+    "tier_1": [
+      {
+        "ref": "Maya Craft Coconut",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Coconut",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Coconut",
+        "nota": "Misma familia con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Coconut",
+        "nota": "Nudo más grueso con mismo colorido"
+      },
+      {
+        "ref": "Terra Serengueti Coconut",
+        "nota": "Nudo más grueso con mismo colorido"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Lite Oat": {
+    "tier_1": [
+      {
+        "ref": "Maya Craft Oat",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Oat",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Oat",
+        "nota": "Misma familia con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Oat",
+        "nota": "Nudo más grueso con mismo colorido"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Lite Licorice": {
+    "tier_1": [
+      {
+        "ref": "Maya Craft Licorice",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Licorice",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Licorice",
+        "nota": "Misma familia con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Nut",
+        "nota": "Nudo más grueso con color similar"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Lite Linen": {
+    "tier_1": [
+      {
+        "ref": "Maya Craft Linen",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Linen",
+        "nota": "Misma familia con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Linen",
+        "nota": "Misma familia con diferente diseño"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Maya Lineage Coconut": {
+    "tier_1": [
+      {
+        "ref": "Lyra Coconut Oat",
+        "nota": "Misma familia (PET outdoor) con diferente diseño"
+      },
+      {
+        "ref": "Maya Craft Coconut",
+        "nota": "Misma familia (PET outdoor) con diferente diseño"
+      },
+      {
+        "ref": "Maya Lite Coconut",
+        "nota": "Misma familia (PET outdoor) con diferente diseño"
+      },
+      {
+        "ref": "Maya Gradient Coconut",
+        "nota": "Misma familia (PET outdoor) con diferente diseño"
+      },
+      {
+        "ref": "Maya Wave Coconut",
+        "nota": "Misma familia (PET outdoor) con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Sahara Coconut",
+        "nota": "Nudo más grueso con mismo colorido"
+      },
+      {
+        "ref": "Terra Serengueti Coconut",
+        "nota": "Nudo más grueso con mismo colorido"
+      },
+      {
+        "ref": "Terra Uyuni Coconut White",
+        "nota": "Nudo más grueso con mismo colorido"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Maya Lineage Iron": {
+    "tier_1": [
+      {
+        "ref": "Lyra Iron Linen",
+        "nota": "Misma familia (PET outdoor) con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Terra Atacama Iron Linen",
+        "nota": "Nudo más grueso con color similar"
+      },
+      {
+        "ref": "Terra Uyuni Iron Linen",
+        "nota": "Nudo más grueso con color similar"
+      },
+      {
+        "ref": "Terra Gorafe Iron Linen",
+        "nota": "Nudo más grueso con color similar"
+      },
+      {
+        "ref": "Terra Gobi Iron Linen",
+        "nota": "Nudo más grueso con color similar"
+      },
+      {
+        "ref": "Terra Sahara Iron",
+        "nota": "Nudo más grueso con color similar"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Rock Sand": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Sand",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Sand",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Rock Carbon": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Carbon",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Carbon",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Rock Chalk": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Chalk",
+        "nota": "Mismo grosor de textura con diferente diseñoe"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Chalk",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Rock Cinder": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Cinder",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Cinder",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Rock Clay": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Clay",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Clay",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Rock Marl": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Marl",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Marl",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Icon Sand": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Sand",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Sand",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Icon Carbon": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Carbon",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Carbon",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Icon Chalk": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Chalk",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Chalk",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Icon Cinder": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Cinder",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Cinder",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Icon Clay": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Clay",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Clay",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Icon Marl": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Marl",
+        "nota": "Mismo grosor de textura con diferente diseño"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Marl",
+        "nota": "Alternativa de Marina en el mismo color (es otra construcción diferente, en cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Nomad Chalk": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Chalk",
+        "nota": "Mismo material outdoor, el color base es el mismo"
+      },
+      {
+        "ref": "Palma Rock Chalk",
+        "nota": "Mismo material outdoor, el color base es el mismo"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Chalk",
+        "nota": "Alternativa de construcción pero color equivalente (son cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Nomad Clay": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Clay",
+        "nota": "Mismo material outdoor, el color base es el mismo"
+      },
+      {
+        "ref": "Palma Rock Clay",
+        "nota": "Mismo material outdoor, el color base es el mismo"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Clay",
+        "nota": "Alternativa de construcción pero color equivalente (son cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Palma Nomad Sand Black": {
+    "tier_1": [
+      {
+        "ref": "Palma Icon Sand",
+        "nota": "Mismo material outdoor, el color base es el mismo"
+      },
+      {
+        "ref": "Palma Rock Sand",
+        "nota": "Mismo material outdoor, el color base es el mismo"
+      }
+    ],
+    "tier_2": [
+      {
+        "ref": "Marina Sand",
+        "nota": "Alternativa de construcción pero color equivalente (son cuerdas braided)"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Kilt 01": {
+    "tier_1": [],
+    "tier_2": [],
+    "sin_alternativas": true
+  },
+  "Kilt 02": {
+    "tier_1": [],
+    "tier_2": [],
+    "sin_alternativas": true
+  },
+  "Kilt 03": {
+    "tier_1": [],
+    "tier_2": [
+      {
+        "ref": "Aral 04",
+        "nota": "Alternativas con lectura orgánica y bucle más grueso"
+      },
+      {
+        "ref": "Terra Serengueti Ivy White",
+        "nota": "Alternativas con lectura orgánica y bucle más grueso"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Kilt 04": {
+    "tier_1": [],
+    "tier_2": [],
+    "sin_alternativas": true
+  },
+  "Kilt 05": {
+    "tier_1": [],
+    "tier_2": [
+      {
+        "ref": "Aral 02",
+        "nota": "Alternativa cálida y terrosa"
+      },
+      {
+        "ref": "Aral 03",
+        "nota": "Alternativa cálida y terrosa"
+      }
+    ],
+    "sin_alternativas": false
+  },
+  "Kilt 06": {
+    "tier_1": [
+      {
+        "ref": "Terra Kalahari Oat Sea",
+        "nota": "Alternativas con lectura orgánica y bucle más grueso"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Marina Sand": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Sand",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      },
+      {
+        "ref": "Palma Icon Sand",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Marina Carbon": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Carbon",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      },
+      {
+        "ref": "Palma Icon Carbon",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Marina Chalk": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Chalk",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      },
+      {
+        "ref": "Palma Icon Chalk",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Marina Cinder": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Cinder",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      },
+      {
+        "ref": "Palma Icon Cinder",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Marina Clay": {
+    "tier_1": [
+      {
+        "ref": "Palma Rock Clay",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      },
+      {
+        "ref": "Palma Icon Clay",
+        "nota": "Mismo material y colorido pero construcción diferente"
+      }
+    ],
+    "tier_2": [],
+    "sin_alternativas": false
+  },
+  "Marina Marl": {
+    "tier_1": [],
+    "tier_2": [
+      {
+        "ref": "Palma Rock Sand",
+        "nota": "Mismo material y colorido base similar pero construcción diferente y sin combinación de colores"
+      },
+      {
+        "ref": "Palma Icon Sand",
+        "nota": "Mismo material y colorido base similar pero construcción diferente y sin combinación de colores"
+      }
+    ],
+    "sin_alternativas": false
+  }
+}

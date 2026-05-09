@@ -1,0 +1,588 @@
+{
+  "_comentario": "Especificaciones por coleccion de Rols Carpets. Fuente: Notion (extraccion 2026-05-07 con correcciones desde fichas individuales). Claves normalizadas en mayusculas sin acentos. anchos_rollo en metros. max_alfombra=[ancho_max,largo_max]. solo_alfombra=true significa NO se vende como corte de moqueta. orientacion_importa=true significa que rotar las medidas altera el diseno.",
+  "colecciones": {
+    "ANNABELLE NX": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "ARAL": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "CASTOR NX": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "DIANA HERRINGBONE": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false,
+      "nota": "Diseno herringbone: al girar medidas, confirmar orientacion con cliente."
+    },
+    "DIANA GREEK KEY": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "GALA DIAMOND": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "GALA KEY": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "KILT": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true,
+      "_fuente": "Ficha individual Notion 2026-05-07: 'Suministro en ancho hasta 4 m'."
+    },
+    "LARA UNI": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "100% lana",
+      "exterior": false,
+      "nota": "UNI = liso, sin restriccion de orientacion."
+    },
+    "LUNA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "Nylon reciclado ECONYL",
+      "exterior": false
+    },
+    "LYRA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true,
+      "_fuente": "Ficha individual Notion 2026-05-07: 'Suministro en ancho hasta 4 m'."
+    },
+    "MANUELA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "MARINA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "Polipropileno",
+      "exterior": true,
+      "nota": "No usar aspirador con cerdas rotatorias.",
+      "_fuente": "Ficha individual Notion 2026-05-07: VACÍA. Anchos heredados de extracción inicial; pendiente confirmar con Fernando."
+    },
+    "MAYA CRAFT": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "MAYA GRADIENT": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "MAYA LINEAGE": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "MAYA LITE": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "MAYA RHOMBUS": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "MAYA WAVE": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "NOA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "NORDICA CHEVRON": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "NORDICA CLASSIC": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "PALMA ICON": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "Polipropileno",
+      "exterior": true,
+      "_fuente": "Ficha individual Notion 2026-05-07."
+    },
+    "PALMA NOMAD": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "Polipropileno",
+      "exterior": true,
+      "_fuente": "Ficha individual Notion 2026-05-07."
+    },
+    "PALMA ROCK": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "Polipropileno",
+      "exterior": true,
+      "_fuente": "Pendiente verificar; corregido por consistencia con familia Palma."
+    },
+    "PARADISE": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "Nylon",
+      "exterior": false
+    },
+    "SENSACION": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "Nylon",
+      "exterior": false
+    },
+    "SERENA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "STRATA": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TEIDE NX": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "TERRA ATACAMA": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA GOBI": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA GORAFE": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA KALAHARI": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA PATAGONIA": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA SAHARA": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA SERENGUETI": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "TERRA UYUNI": {
+      "anchos_rollo": [
+        2,
+        3
+      ],
+      "max_alfombra": [
+        3,
+        6
+      ],
+      "solo_alfombra": true,
+      "orientacion_importa": true,
+      "material": "PET reciclado",
+      "exterior": true
+    },
+    "VEGA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "VICTORIA": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": true,
+      "material": "100% lana",
+      "exterior": false
+    },
+    "ZENIT NX": {
+      "anchos_rollo": [
+        2,
+        4
+      ],
+      "max_alfombra": [
+        4,
+        6
+      ],
+      "solo_alfombra": false,
+      "orientacion_importa": false,
+      "material": "100% lana",
+      "exterior": false
+    }
+  }
+}
