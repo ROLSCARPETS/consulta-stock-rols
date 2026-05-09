@@ -24,6 +24,9 @@ import buscar_stock as bs  # noqa: E402
 
 
 app = Flask(__name__)
+# Recargar plantillas en caliente sin reiniciar el servidor
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.jinja_env.auto_reload = True
 
 # ---------------------------------------------------------------------------
 # Carga inicial de datos (una sola vez al arrancar)
