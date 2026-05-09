@@ -51,6 +51,20 @@ print(f"  -> {len(COLECCIONES)} colecciones, {len(ALTERNATIVAS)} colores con alt
 DESCRIPCIONES = sorted({p.descripcion for p in PIEZAS} | {p.descripcion for p in PIEZAS_FAB})
 print(f"  -> {len(DESCRIPCIONES)} referencias unicas")
 
+
+def _pertenece_a_catalogo(desc: str, colecciones: dict) -> bool:
+    """True si la descripcion pertenece a una coleccion presente en colecciones.json."""
+    desc_norm = bs.normalizar(desc)
+    for col_key in sorted(colecciones, key=len, reverse=True):
+        col_norm = bs.normalizar(col_key)
+        if desc_norm == col_norm or desc_norm.startswith(col_norm + " "):
+            return True
+    return False
+
+
+DESCRIPCIONES_ACTIVAS = sorted(d for d in DESCRIPCIONES if _pertenece_a_catalogo(d, COLECCIONES))
+print(f"  -> {len(DESCRIPCIONES_ACTIVAS)} referencias activas (en catalogo)")
+
 LOAD_TIME = time.time()
 
 
@@ -268,7 +282,12 @@ def index():
 
 @app.route("/api/refs")
 def api_refs():
-    return jsonify(DESCRIPCIONES)
+    """Solo referencias activas (cuya coleccion esta en colecciones.json).
+
+    El chat en lenguaje natural sigue usando DESCRIPCIONES (todas) para poder
+    reconocer referencias antiguas si el usuario las menciona.
+    """
+    return jsonify(DESCRIPCIONES_ACTIVAS)
 
 
 @app.route("/api/consulta", methods=["POST"])
