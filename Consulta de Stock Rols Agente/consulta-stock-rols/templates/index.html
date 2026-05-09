@@ -710,8 +710,9 @@ async function lanzarConsulta(payload, endpoint, btnId) {
     // Recordar respuesta para poder responder a "si" tras oferta de alternativas
     lastResponseData = data;
 
-    // Si la consulta es ambigua: pintar chips de color clicables
-    if (data.tipo === 'necesita_color' && data.chips_color) {
+    // Chips de color: para preguntas ambiguas (necesita_color) y para
+    // meta-preguntas tipo "qué colores hay de teide nx" (lista_colores).
+    if ((data.tipo === 'necesita_color' || data.tipo === 'lista_colores') && data.chips_color) {
       const chipsHTML = data.chips_color.map(c =>
         `<button type="button" class="chip-color px-3 py-1.5 rounded-full bg-stone-100 hover:bg-amber-100 border border-stone-200 hover:border-amber-300 text-sm transition" data-ref="${c.ref}">${c.label}</button>`
       ).join('');

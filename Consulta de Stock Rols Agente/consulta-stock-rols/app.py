@@ -339,6 +339,75 @@ def _ejecutar_consulta(ref, ancho, largo):
 
 
 # ---------------------------------------------------------------------------
+# Meta-preguntas: "qué colores hay de X", "qué referencias tienes de Y"...
+# ---------------------------------------------------------------------------
+
+# Detecta intent de listar colores/referencias de una coleccion.
+# Trabaja sobre la query ya normalizada (mayusculas, sin acentos).
+META_LISTA_RE = re.compile(
+    r"\b(QUE|CUALES|MUESTRA(ME)?|ENSENA(ME)?|DIME|VER|LISTA(R)?)\s+"
+    r"(OTROS?\s+)?(LOS?\s+|LAS?\s+)?"
+    r"(COLOR(ES)?|REFERENCIAS?|OPCIONES?|TONOS?|VARIANTES?|MODELOS?)\b"
+)
+
+
+def _coleccion_de_descripcion(desc: str) -> str | None:
+    """Devuelve la coleccion (clave en COLECCIONES) a la que pertenece la descripcion."""
+    if not desc:
+        return None
+    nd = bs.normalizar(desc)
+    for col in sorted(COLECCIONES, key=len, reverse=True):
+        col_norm = bs.normalizar(col)
+        if nd == col_norm or nd.startswith(col_norm + " "):
+            return col
+    return None
+
+
+def _detectar_coleccion_en_query(nq: str) -> str | None:
+    """Busca el nombre de una coleccion como subcadena en la query normalizada."""
+    for col in sorted(COLECCIONES, key=len, reverse=True):
+        col_norm = bs.normalizar(col)
+        if col_norm and col_norm in nq:
+            return col
+    return None
+
+
+def _descripciones_de_coleccion(col: str) -> list[str]:
+    """Lista de DESCRIPCIONES_ACTIVAS que pertenecen a la coleccion `col`."""
+    col_norm = bs.normalizar(col)
+    return [
+        d for d in DESCRIPCIONES_ACTIVAS
+        if bs.normalizar(d) == col_norm or bs.normalizar(d).startswith(col_norm + " ")
+    ]
+
+
+def _lista_colores_response(col: str) -> dict:
+    """Construye la respuesta para el frontend cuando piden listar colores."""
+    descs = _descripciones_de_coleccion(col)
+    chips = []
+    for d in descs:
+        # Quitar el prefijo de la coleccion para que el chip muestre solo el color.
+        prefijo = col + " "
+        label = d[len(prefijo):].strip() if d.upper().startswith(prefijo.upper()) else d
+        chips.append({"ref": d, "label": label or d})
+    if descs:
+        mensaje = (
+            f"En **{col.title()}** tenemos **{len(descs)} "
+            f"{'color' if len(descs) == 1 else 'colores'}**. Pulsa cualquiera para ver su stock."
+        )
+    else:
+        mensaje = f"No tengo colores activos registrados en **{col.title()}**."
+    return {
+        "tipo": "lista_colores",
+        "mensaje": mensaje,
+        "chips_color": chips,
+        "filas": [],
+        "alternativas": None,
+        "consulta": {"ref": col, "ancho": None, "largo": None},
+    }
+
+
+# ---------------------------------------------------------------------------
 # Rutas
 # ---------------------------------------------------------------------------
 
@@ -391,6 +460,16 @@ def api_consulta_nl():
     last_ref = (data.get("last_ref") or "").strip() or None
     if not query:
         return jsonify({"error": "Falta la consulta"}), 400
+
+    # Meta-pregunta: "que otros colores hay de teide nx?", "muestrame las
+    # referencias de palma rock"... Devuelve chips con todos los colores.
+    nq = bs.normalizar(query)
+    if META_LISTA_RE.search(nq):
+        col = _detectar_coleccion_en_query(nq)
+        if not col and last_ref:
+            col = _coleccion_de_descripcion(last_ref)
+        if col:
+            return jsonify(_lista_colores_response(col))
 
     parsed = parse_natural_query(query, last_ref=last_ref)
 
