@@ -189,6 +189,15 @@ def parse_natural_query(query: str, last_ref: str = None) -> dict:
 
 
 
+def _fmt_fecha_es(iso) -> str:
+    """Convierte 'YYYY-MM-DD' (o ISO datetime) a 'DD/MM/YYYY'. Si no es
+    formato reconocible, devuelve el valor tal cual."""
+    if not iso:
+        return ""
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", str(iso))
+    return f"{m.group(3)}/{m.group(2)}/{m.group(1)}" if m else str(iso)
+
+
 def _formatear_resultado_para_tabla(resultado: dict) -> list[dict]:
     """Aplana stock + fabricacion en filas listas para la tabla del frontend."""
     filas = []
@@ -308,10 +317,12 @@ def _ejecutar_consulta(ref, ancho, largo):
         )
     elif tipo == "fabricacion":
         mejor = resultado["fabricacion"]["piezas"][0]
+        fecha = mejor.get("fecha_retraso") or mejor.get("fecha_disponibilidad")
+        fecha_txt = f"disponible ~{_fmt_fecha_es(fecha)}" if fecha else "fecha fin fabricación no especificada"
         mensaje = (
             f"No hay stock terminado, pero hay **{n_fab} {'pieza' if n_fab == 1 else 'piezas'} en fabricación**. "
             f"La más cercana es {mejor['lote']} ({mejor['longitud_no_comprometida']:.2f} m libres, "
-            f"disponible ~{mejor['fecha_disponibilidad']})."
+            f"{fecha_txt})."
         )
         if hay_alts:
             mensaje += " ¿Quieres que mire también **alternativas que sí tengamos en stock**?"
