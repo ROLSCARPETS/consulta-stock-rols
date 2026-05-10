@@ -1119,6 +1119,9 @@ formGuiada.addEventListener('submit', e => {
     ref: document.getElementById('ref').value,
     ancho, largo, unidad: 'cm',
   }, '/api/consulta', 'btn-guiada');
+  // Vaciar el form para empezar limpio en la siguiente consulta
+  formGuiada.reset();
+  closeRefDropdown();
 });
 
 formNL.addEventListener('submit', e => {
