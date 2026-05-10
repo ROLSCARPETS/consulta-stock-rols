@@ -54,7 +54,8 @@
       "ai_initial": "Hier ziet u het antwoord van de assistent zodra u een vraag stelt. Gebruik het formulier of typ in natuurlijke taal."
     },
     "search_context": {
-      "label": "Actieve zoekopdracht"
+      "label": "Actieve zoekopdracht",
+      "ref_count": "{count} referenties"
     },
     "results": {
       "title": "Beschikbare stukken voor uw zoekopdracht",

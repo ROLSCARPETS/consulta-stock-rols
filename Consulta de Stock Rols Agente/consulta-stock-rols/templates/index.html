@@ -595,12 +595,16 @@ function fmtMeasure(n) {
   return n === Math.trunc(n) ? `${n}` : Number(n).toFixed(2).replace('.', ',');
 }
 
-function formatSearchSummary(ref, ancho, largo) {
+function formatSearchSummary(ref, ancho, largo, refCount) {
   if (!ref) return null;
-  if (ancho != null && largo != null) return `${ref} · ${fmtMeasure(ancho)} × ${fmtMeasure(largo)} m`;
-  if (ancho != null) return `${ref} · ${fmtMeasure(ancho)} m ancho`;
-  if (largo != null) return `${ref} · ${fmtMeasure(largo)} m`;
-  return ref;
+  let head = ref;
+  if (refCount && refCount > 1) {
+    head += ' · ' + t('ui.search_context.ref_count', {count: refCount});
+  }
+  if (ancho != null && largo != null) return `${head} · ${fmtMeasure(ancho)} × ${fmtMeasure(largo)} m`;
+  if (ancho != null) return `${head} · ${fmtMeasure(ancho)} m ancho`;
+  if (largo != null) return `${head} · ${fmtMeasure(largo)} m`;
+  return head;
 }
 
 // Ultima referencia valida; se envia al backend en consultas NL para
@@ -654,7 +658,7 @@ function respondToAlternativasOffer(prev) {
 }
 
 function updateSearchContext(data) {
-  let ref = null, ancho, largo;
+  let ref = null, ancho, largo, refCount = null;
 
   if (data.parsed && data.parsed.coleccion_ambigua) {
     ref = data.parsed.coleccion_ambigua + ' (elige color)';
@@ -662,18 +666,31 @@ function updateSearchContext(data) {
     largo = data.parsed.largo;
   } else if (data.consulta) {
     ({ ancho, largo } = data.consulta);
-    // Canonicalizar primero via la primera fila (captura matches difusos
-    // como escribir "palma icon" sin color), luego via el ref tal cual.
-    const filaDesc = data.filas && data.filas[0] && data.filas[0].descripcion;
-    ref = findCanonicalRef(filaDesc) || findCanonicalRef(data.consulta.ref);
-    if (ref) lastRef = ref;
+    const filas = data.filas || [];
+    const uniqueRefs = new Set(filas.map(f => f.descripcion).filter(Boolean));
+
+    if (uniqueRefs.size > 1) {
+      // La query del usuario matchea varias referencias distintas
+      // (ej. "coconut white" -> Terra Atacama, Terra Gobi, Terra Uyuni).
+      // Mostrar la query en title case + conteo, NO la primera fila.
+      const userQuery = (data.consulta.ref || '').trim();
+      if (userQuery) {
+        ref = titleCase(userQuery);
+        refCount = uniqueRefs.size;
+      }
+    } else {
+      // Una sola referencia distinta (o ninguna): canonicalizar.
+      const filaDesc = filas[0] && filas[0].descripcion;
+      ref = findCanonicalRef(filaDesc) || findCanonicalRef(data.consulta.ref);
+      if (ref) lastRef = ref;
+    }
   }
 
   if (!ref) {
     searchContext.style.display = 'none';
     return;
   }
-  const summary = formatSearchSummary(ref, ancho, largo);
+  const summary = formatSearchSummary(ref, ancho, largo, refCount);
   searchContextText.textContent = summary;
   searchContext.style.display = 'block';
 }
@@ -718,11 +735,13 @@ const refResultCount = document.getElementById('ref-result-count');
 let refActiveIndex = -1;
 
 function titleCase(s) {
-  // Preserva abreviaturas cortas (NX, OSC, NL, etc.) intactas
+  // Title case preservando abreviaturas (NX, OSC) y numeros.
+  // Si la entrada esta en minusculas, fuerza mayusculas en abreviaturas cortas.
   return s.split(' ').map(w => {
-    if (w.length <= 2) return w;
+    if (!w) return w;
     if (/^\d/.test(w)) return w;  // numeros tal cual: "01", "850"
-    return w.charAt(0) + w.slice(1).toLowerCase();
+    if (w.length <= 2) return w.toUpperCase();  // siglas
+    return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
   }).join(' ');
 }
 

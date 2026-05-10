@@ -54,7 +54,8 @@
       "ai_initial": "Aquí verás la respuesta del asistente cuando lances una consulta. Puedes usar el formulario o escribir en lenguaje natural."
     },
     "search_context": {
-      "label": "Búsqueda activa"
+      "label": "Búsqueda activa",
+      "ref_count": "{count} referencias"
     },
     "results": {
       "title": "Piezas disponibles para completar la consulta",

@@ -54,7 +54,8 @@
       "ai_initial": "Qui vedrai la risposta dell'assistente quando lanci una richiesta. Puoi usare il modulo o scrivere in linguaggio naturale."
     },
     "search_context": {
-      "label": "Ricerca attiva"
+      "label": "Ricerca attiva",
+      "ref_count": "{count} referenze"
     },
     "results": {
       "title": "Pezzi disponibili per la tua richiesta",

@@ -54,7 +54,8 @@
       "ai_initial": "Vous verrez la réponse de l'assistant ici dès que vous lancerez une requête. Utilisez le formulaire ou écrivez en langage naturel."
     },
     "search_context": {
-      "label": "Recherche active"
+      "label": "Recherche active",
+      "ref_count": "{count} références"
     },
     "results": {
       "title": "Pièces disponibles pour votre recherche",

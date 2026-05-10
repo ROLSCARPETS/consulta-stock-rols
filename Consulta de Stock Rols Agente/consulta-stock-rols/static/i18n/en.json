@@ -54,7 +54,8 @@
       "ai_initial": "You'll see the assistant's response here once you launch a query. You can use the form or type in natural language."
     },
     "search_context": {
-      "label": "Active search"
+      "label": "Active search",
+      "ref_count": "{count} references"
     },
     "results": {
       "title": "Pieces available for your query",

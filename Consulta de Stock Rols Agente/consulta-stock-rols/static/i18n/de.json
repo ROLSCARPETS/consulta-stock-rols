@@ -54,7 +54,8 @@
       "ai_initial": "Hier erscheint die Antwort des Assistenten, sobald Sie eine Anfrage stellen. Sie können das Formular nutzen oder in natürlicher Sprache schreiben."
     },
     "search_context": {
-      "label": "Aktive Suche"
+      "label": "Aktive Suche",
+      "ref_count": "{count} Referenzen"
     },
     "results": {
       "title": "Verfügbare Stücke für Ihre Anfrage",
