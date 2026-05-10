@@ -54,18 +54,40 @@ DESCRIPCIONES = sorted({p.descripcion for p in PIEZAS} | {p.descripcion for p in
 print(f"  -> {len(DESCRIPCIONES)} referencias unicas")
 
 
-def _pertenece_a_catalogo(desc: str, colecciones: dict) -> bool:
-    """True si la descripcion pertenece a una coleccion presente en colecciones.json."""
-    desc_norm = bs.normalizar(desc)
-    for col_key in sorted(colecciones, key=len, reverse=True):
-        col_norm = bs.normalizar(col_key)
-        if desc_norm == col_norm or desc_norm.startswith(col_norm + " "):
-            return True
-    return False
+# Lista (coleccion, normalizada) ordenada de mas larga a mas corta. Permite
+# matchear correctamente "MAYA LITE" antes que "MAYA" cuando se busca prefijo.
+COLECCIONES_NORMALIZADAS: list[tuple[str, str]] = [
+    (c, bs.normalizar(c)) for c in sorted(COLECCIONES.keys(), key=len, reverse=True)
+]
 
 
-DESCRIPCIONES_ACTIVAS = sorted(d for d in DESCRIPCIONES if _pertenece_a_catalogo(d, COLECCIONES))
+def _calcular_coleccion_de(desc: str) -> str | None:
+    """Devuelve la clave de coleccion a la que pertenece una descripcion, o None."""
+    if not desc:
+        return None
+    nd = bs.normalizar(desc)
+    for col, col_norm in COLECCIONES_NORMALIZADAS:
+        if nd == col_norm or nd.startswith(col_norm + " "):
+            return col
+    return None
+
+
+# Map descripcion -> coleccion (pre-computado: O(1) por lookup).
+DESC_TO_COLECCION: dict[str, str] = {}
+for _desc in DESCRIPCIONES:
+    _col = _calcular_coleccion_de(_desc)
+    if _col:
+        DESC_TO_COLECCION[_desc] = _col
+
+# Solo descripciones cuya coleccion esta en el catalogo activo.
+DESCRIPCIONES_ACTIVAS = sorted(DESC_TO_COLECCION.keys())
 print(f"  -> {len(DESCRIPCIONES_ACTIVAS)} referencias activas (en catalogo)")
+
+# Map inverso pre-computado: coleccion -> lista de descripciones activas.
+COLECCION_TO_DESCS_ACTIVAS: dict[str, list[str]] = {}
+for _desc in DESCRIPCIONES_ACTIVAS:
+    _col = DESC_TO_COLECCION[_desc]
+    COLECCION_TO_DESCS_ACTIVAS.setdefault(_col, []).append(_desc)
 
 # ---------------------------------------------------------------------------
 # Traducciones (i18n)
@@ -376,7 +398,6 @@ def _ejecutar_consulta(ref, ancho, largo, lang: str = DEFAULT_LANG):
         return {
             "tipo": "medida_invalida",
             "mensaje": mensaje,
-            "markdown": "",
             "filas": [],
             "n_stock": 0,
             "n_fabricacion": 0,
@@ -385,8 +406,6 @@ def _ejecutar_consulta(ref, ancho, largo, lang: str = DEFAULT_LANG):
             "chips_medida": chips_medida,
             "consulta": {"ref": ref, "ancho": ancho, "largo": largo},
         }
-
-    markdown = bs.render_markdown(resultado)
 
     if resultado["stock"]:
         tipo = "stock"
@@ -431,7 +450,6 @@ def _ejecutar_consulta(ref, ancho, largo, lang: str = DEFAULT_LANG):
     return {
         "tipo": tipo,
         "mensaje": mensaje,
-        "markdown": markdown,
         "filas": _formatear_resultado_para_tabla(resultado),
         "n_stock": n_stock,
         "n_fabricacion": n_fab,
@@ -465,33 +483,23 @@ def _is_meta_lista(nq: str) -> bool:
 
 
 def _coleccion_de_descripcion(desc: str) -> str | None:
-    """Devuelve la coleccion (clave en COLECCIONES) a la que pertenece la descripcion."""
+    """Devuelve la coleccion a la que pertenece la descripcion (lookup O(1))."""
     if not desc:
         return None
-    nd = bs.normalizar(desc)
-    for col in sorted(COLECCIONES, key=len, reverse=True):
-        col_norm = bs.normalizar(col)
-        if nd == col_norm or nd.startswith(col_norm + " "):
-            return col
-    return None
+    return DESC_TO_COLECCION.get(desc) or _calcular_coleccion_de(desc)
 
 
 def _detectar_coleccion_en_query(nq: str) -> str | None:
     """Busca el nombre de una coleccion como subcadena en la query normalizada."""
-    for col in sorted(COLECCIONES, key=len, reverse=True):
-        col_norm = bs.normalizar(col)
+    for col, col_norm in COLECCIONES_NORMALIZADAS:
         if col_norm and col_norm in nq:
             return col
     return None
 
 
 def _descripciones_de_coleccion(col: str) -> list[str]:
-    """Lista de DESCRIPCIONES_ACTIVAS que pertenecen a la coleccion `col`."""
-    col_norm = bs.normalizar(col)
-    return [
-        d for d in DESCRIPCIONES_ACTIVAS
-        if bs.normalizar(d) == col_norm or bs.normalizar(d).startswith(col_norm + " ")
-    ]
+    """Lista de DESCRIPCIONES_ACTIVAS que pertenecen a la coleccion `col` (lookup O(1))."""
+    return COLECCION_TO_DESCS_ACTIVAS.get(col, [])
 
 
 def _necesita_color_response(coleccion: str, colores: list, ancho, largo,
@@ -625,23 +633,15 @@ def api_refs_grouped():
     """Referencias activas agrupadas por coleccion, con el color sin el
     prefijo de la coleccion para visualizacion limpia. Lo usa el dropdown
     de busqueda guiada del frontend."""
-    grupos = {}
-    for ref in DESCRIPCIONES_ACTIVAS:
-        col = _coleccion_de_descripcion(ref)
-        if not col:
-            continue
-        col_norm = bs.normalizar(col)
-        nd = bs.normalizar(ref)
-        if nd == col_norm:
-            label = ref
-        elif nd.startswith(col_norm + " "):
-            label = ref[len(col):].strip()
-        else:
-            label = ref
-        grupos.setdefault(col, []).append({"ref": ref, "label": label or ref})
     return jsonify([
-        {"coleccion": col, "colores": sorted(cs, key=lambda x: x["ref"])}
-        for col, cs in sorted(grupos.items())
+        {
+            "coleccion": col,
+            "colores": [
+                {"ref": ref, "label": ref[len(col):].strip() or ref}
+                for ref in sorted(refs)
+            ],
+        }
+        for col, refs in sorted(COLECCION_TO_DESCS_ACTIVAS.items())
     ])
 
 
