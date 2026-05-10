@@ -107,6 +107,8 @@
   }
   .obs-content > div + div { margin-top: 0.45rem; }
   .obs-content strong { color: #44483a; }
+  /* Ocultar columna de fecha fin fabricacion cuando solo hay stock */
+  table.no-fab .col-fab { display: none; }
   .row-highlight { background: #f8f3e3; }
   .row-highlight td:first-child { border-left: 3px solid var(--accent); padding-left: calc(1rem - 3px); }
   table { width: 100%; border-collapse: collapse; }
@@ -369,6 +371,7 @@
                   <th>Ancho</th>
                   <th>Long. no comprometida (ML)</th>
                   <th>Estado pieza</th>
+                  <th class="col-fab">Fecha fin fabricación</th>
                 </tr>
               </thead>
               <tbody id="tabla-body"></tbody>
@@ -548,6 +551,13 @@ function fmtNum(n, dec) {
   return Number(n).toFixed(dec).replace('.', ',');
 }
 
+function fmtFecha(iso) {
+  // 'YYYY-MM-DD' → 'DD/MM/YYYY'. Si no matchea el formato, devuelve tal cual.
+  if (!iso) return '';
+  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
+}
+
 function escapeHtml(s) {
   if (s == null) return '';
   return String(s)
@@ -576,6 +586,11 @@ function renderRows(filas) {
   tablaFooter.classList.remove('hidden');
   tablaConteo.textContent = `Mostrando ${filas.length} pieza${filas.length === 1 ? '' : 's'}`;
 
+  // Mostrar/ocultar la columna "Fecha fin fabricacion" segun haya piezas en fabricacion
+  const hayFab = filas.some(f => f.tipo === 'fabricacion');
+  const tabla = tablaWrapper.querySelector('table');
+  if (tabla) tabla.classList.toggle('no-fab', !hayFab);
+
   tablaBody.innerHTML = filas.map((f, i) => {
     const cls = STATUS_BADGES[f.estado] || 'badge-correcto';
     const estadoTxt = displayEstado(f.estado).toUpperCase();
@@ -588,6 +603,12 @@ function renderRows(filas) {
     const badgeAttrs = tieneObs ? ` data-toggle-obs="${i}" title="Click para ver anotaciones"` : '';
     const hint = tieneObs ? ' <span style="font-size:0.7em;opacity:0.65;">▾</span>' : '';
 
+    let fechaTxt = '';
+    if (f.tipo === 'fabricacion') {
+      const fechaRaw = f.fecha_retraso || f.fecha_disponibilidad;
+      fechaTxt = fechaRaw ? fmtFecha(fechaRaw) : '<span class="text-stone-400 italic">No especificada</span>';
+    }
+
     let html = `
       <tr class="${rowCls}">
         <td><div class="flex items-center gap-2">${i === 0 ? '<span class="w-1.5 h-1.5 rounded-full bg-stone-700 inline-block"></span>' : '<span class="w-1.5 h-1.5 inline-block"></span>'}<span class="font-medium">${f.descripcion}</span></div></td>
@@ -595,13 +616,14 @@ function renderRows(filas) {
         <td>${ancho}</td>
         <td>${libre}</td>
         <td><span class="${badgeClass}"${badgeAttrs}><span class="dot"></span>${estadoTxt}${hint}</span></td>
+        <td class="text-stone-600 col-fab">${fechaTxt}</td>
       </tr>`;
 
     if (tieneObs) {
       const partes = [];
       if (f.obs_revision) partes.push(`<div><strong>Revisión:</strong> ${escapeHtml(f.obs_revision)}</div>`);
       if (f.obs_venta) partes.push(`<div><strong>Venta:</strong> ${escapeHtml(f.obs_venta)}</div>`);
-      html += `<tr class="obs-row hidden" data-obs-row="${i}"><td colspan="5"><div class="obs-content">${partes.join('')}</div></td></tr>`;
+      html += `<tr class="obs-row hidden" data-obs-row="${i}"><td colspan="6"><div class="obs-content">${partes.join('')}</div></td></tr>`;
     }
 
     return html;
