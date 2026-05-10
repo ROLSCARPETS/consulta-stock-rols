@@ -72,11 +72,28 @@ REGLAS DE INTENT:
 - "consulta_stock": el usuario pregunta por disponibilidad de un producto.
   Ejemplos: "tienes palma icon sand 4x3", "30 ml de luna platinium",
   "necesito algo en diana herringbone".
-- "lista_colores": pide ver los colores/referencias de una coleccion.
-  Ejemplos: "que colores hay de teide nx", "muestrame las referencias
-  de palma rock", "que tonos tiene marina".
-- "alternativas": pide alternativas a una referencia previa.
-  Ejemplos: "alternativas para X", "que otras opciones tengo".
+
+- "lista_colores": pide ver MULTIPLES colores/referencias/tonos de una
+  coleccion (la misma familia, hermanos del producto previo).
+  Ejemplos:
+    * "que colores hay de teide nx"
+    * "muestrame las referencias de palma rock"
+    * "que tonos tiene marina"
+    * "dime otros colores de maya craft"
+    * "dame mas colores de luna"
+    * "que mas hay en diana"
+    * "todos los colores de annabelle"
+  IMPORTANTE: cuando el usuario dice "OTROS colores", "MAS colores",
+  "OTRAS referencias" o similar, casi siempre quiere lista_colores
+  (los hermanos del producto previo en la misma coleccion), NO
+  alternativas (que serian otra coleccion distinta).
+
+- "alternativas": pide referencias EQUIVALENTES de OTRA coleccion
+  cuando la pedida no encaja o no hay stock. Solo cuando usa palabras
+  explicitas: "alternativa", "alternativas", "similar", "parecido",
+  "que se parezca", "otra opcion equivalente", "algo equivalente".
+  Si dice "otros COLORES" o "mas COLORES" → es lista_colores, no alternativas.
+
 - "no_entendido": si no puedes determinar la intencion con confianza.
 
 REGLAS PARA "ref":

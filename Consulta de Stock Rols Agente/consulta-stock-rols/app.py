@@ -356,11 +356,22 @@ def _ejecutar_consulta(ref, ancho, largo):
 
 # Detecta intent de listar colores/referencias de una coleccion.
 # Trabaja sobre la query ya normalizada (mayusculas, sin acentos).
-META_LISTA_RE = re.compile(
-    r"\b(QUE|CUALES|MUESTRA(ME)?|ENSENA(ME)?|DIME|VER|LISTA(R)?)\s+"
-    r"(OTROS?\s+)?(LOS?\s+|LAS?\s+)?"
-    r"(COLOR(ES)?|REFERENCIAS?|OPCIONES?|TONOS?|VARIANTES?|MODELOS?)\b"
+# Para detectar meta-preguntas usamos dos comprobaciones:
+# (a) hay un sustantivo plural de "lista" (COLORES, REFERENCIAS, TONOS...).
+# (b) hay un indicador de listado (QUE, DIME, MAS, OTROS, TODOS...).
+# Asi capturamos variantes con preposiciones intermedias como
+# "dime en otros colores de X" o "dame mas referencias de Y".
+META_NOUN_RE = re.compile(
+    r"\b(COLORES|REFERENCIAS|OPCIONES|TONOS|VARIANTES|MODELOS)\b"
 )
+META_INDICATOR_RE = re.compile(
+    r"\b(QUE|CUALES|MUESTRA(ME)?|ENSENA(ME)?|DIME|DAME|VER|LISTA(R)?|HAY|"
+    r"OTROS?|OTRAS?|MAS|TODOS?|TODAS?)\b"
+)
+
+
+def _is_meta_lista(nq: str) -> bool:
+    return bool(META_NOUN_RE.search(nq) and META_INDICATOR_RE.search(nq))
 
 
 def _coleccion_de_descripcion(desc: str) -> str | None:
@@ -440,6 +451,12 @@ def _try_ai_dispatch(query: str, last_ref: str | None):
         ref = None
     if coleccion and coleccion not in COLECCIONES:
         coleccion = None
+
+    # Red de seguridad: si la IA dijo "alternativas" pero la query
+    # contiene "colores"/"referencias"/etc., el usuario casi seguro
+    # quiere los hermanos de la coleccion (lista_colores).
+    if intent == "alternativas" and _is_meta_lista(bs.normalizar(query)):
+        intent = "lista_colores"
 
     if intent == "lista_colores":
         target = coleccion or _coleccion_de_descripcion(ref) or _coleccion_de_descripcion(last_ref)
@@ -583,7 +600,7 @@ def api_consulta_nl():
 
     # 2) Fallback: meta-pregunta por regex.
     nq = bs.normalizar(query)
-    if META_LISTA_RE.search(nq):
+    if _is_meta_lista(nq):
         col = _detectar_coleccion_en_query(nq)
         if not col and last_ref:
             col = _coleccion_de_descripcion(last_ref)
