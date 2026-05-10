@@ -240,6 +240,8 @@
   }
   .lang-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
   .lang-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.3rem;
     padding: 0.38rem 0.3rem;
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
     border: 1px solid rgba(214,212,200,0.18);
@@ -247,7 +249,11 @@
     border-radius: 0.45rem; cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
     text-align: center;
+    /* Asegura que las banderas usen la fuente emoji del SO */
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
   }
+  .lang-btn .flag { font-size: 0.95rem; line-height: 1; }
+  .lang-btn .code { font-family: 'Inter', sans-serif; line-height: 1; }
   .lang-btn:hover { background: var(--bg-sidebar-hover); color: var(--text-sidebar-active); }
   .lang-btn.active {
     background: var(--accent); border-color: var(--accent); color: #fff;
@@ -281,12 +287,12 @@
     <div class="lang-block">
       <span class="lang-label" data-i18n="ui.sidebar.language">Idioma</span>
       <div class="lang-buttons">
-        <button class="lang-btn" data-lang="es" title="Español">ES</button>
-        <button class="lang-btn" data-lang="en" title="English">EN</button>
-        <button class="lang-btn" data-lang="fr" title="Français">FR</button>
-        <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
-        <button class="lang-btn" data-lang="it" title="Italiano">IT</button>
-        <button class="lang-btn" data-lang="nl" title="Nederlands">NL</button>
+        <button class="lang-btn" data-lang="es" title="Español"><span class="flag">🇪🇸</span><span class="code">ES</span></button>
+        <button class="lang-btn" data-lang="en" title="English"><span class="flag">🇬🇧</span><span class="code">EN</span></button>
+        <button class="lang-btn" data-lang="fr" title="Français"><span class="flag">🇫🇷</span><span class="code">FR</span></button>
+        <button class="lang-btn" data-lang="de" title="Deutsch"><span class="flag">🇩🇪</span><span class="code">DE</span></button>
+        <button class="lang-btn" data-lang="it" title="Italiano"><span class="flag">🇮🇹</span><span class="code">IT</span></button>
+        <button class="lang-btn" data-lang="nl" title="Nederlands"><span class="flag">🇳🇱</span><span class="code">NL</span></button>
       </div>
     </div>
 
