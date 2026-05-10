@@ -244,18 +244,26 @@ def _ejecutar_consulta(ref, ancho, largo):
             and not validacion["encaja_rotando"]):
         anchos = validacion["anchos_rollo_disponibles"]
         max_w, max_l = validacion["max_alfombra"]
+        # El maximo de pieza (max_alfombra) solo aplica si la coleccion es
+        # solo_alfombra=True. Para colecciones que tambien se venden como
+        # moqueta (corte de rollo), el largo no tiene tope: solo manda el
+        # ancho del rollo.
+        solo_alfombra = validacion.get("solo_alfombra", False)
         anchos_str = " y ".join(f"{a:g} m" for a in anchos)
         col_nombre = validacion["coleccion"].title()
         problemas = []
         if ancho is not None and ancho > max(anchos):
             problemas.append(f"el ancho **{ancho:g} m** supera el rollo máximo de **{max(anchos):g} m**")
-        if largo is not None and largo > max_l:
+        if solo_alfombra and largo is not None and largo > max_l:
             problemas.append(f"el largo **{largo:g} m** supera la pieza máxima de **{max_l:g} m**")
         detalle = "; ".join(problemas) if problemas else "no encaja en ninguna combinación de rollo"
 
         # Sugerir la medida factible mas cercana (recortando dimensiones excedidas).
         sug_ancho = max(anchos) if (ancho is not None and ancho > max(anchos)) else ancho
-        sug_largo = max_l if (largo is not None and largo > max_l) else largo
+        if solo_alfombra:
+            sug_largo = max_l if (largo is not None and largo > max_l) else largo
+        else:
+            sug_largo = largo  # Para moqueta, el largo no tiene limite
         chips_medida = []
         if sug_ancho is not None and sug_largo is not None:
             chips_medida.append({
