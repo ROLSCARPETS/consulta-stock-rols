@@ -517,6 +517,31 @@ def api_refs():
     return jsonify(DESCRIPCIONES_ACTIVAS)
 
 
+@app.route("/api/refs-grouped")
+def api_refs_grouped():
+    """Referencias activas agrupadas por coleccion, con el color sin el
+    prefijo de la coleccion para visualizacion limpia. Lo usa el dropdown
+    de busqueda guiada del frontend."""
+    grupos = {}
+    for ref in DESCRIPCIONES_ACTIVAS:
+        col = _coleccion_de_descripcion(ref)
+        if not col:
+            continue
+        col_norm = bs.normalizar(col)
+        nd = bs.normalizar(ref)
+        if nd == col_norm:
+            label = ref
+        elif nd.startswith(col_norm + " "):
+            label = ref[len(col):].strip()
+        else:
+            label = ref
+        grupos.setdefault(col, []).append({"ref": ref, "label": label or ref})
+    return jsonify([
+        {"coleccion": col, "colores": sorted(cs, key=lambda x: x["ref"])}
+        for col, cs in sorted(grupos.items())
+    ])
+
+
 @app.route("/api/consulta", methods=["POST"])
 def api_consulta():
     data = request.get_json(force=True)

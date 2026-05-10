@@ -109,6 +109,60 @@
   .obs-content strong { color: #44483a; }
   /* Ocultar columna de fecha fin fabricacion cuando solo hay stock */
   table.no-fab .col-fab { display: none; }
+  /* Dropdown custom de referencia (reemplaza al datalist nativo) */
+  .ref-combo { position: relative; }
+  .ref-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: #fff; border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: 0 14px 38px -10px rgba(68,72,58,0.28);
+    z-index: 50; max-height: 380px; overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: refDropdownIn 0.12s ease-out;
+  }
+  @keyframes refDropdownIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .ref-dropdown-header {
+    padding: 0.55rem 1rem; font-size: 0.7rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: #8a8474; background: #fdfbf6;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .ref-dropdown-list { overflow-y: auto; flex: 1; padding: 0.25rem 0; }
+  .ref-group + .ref-group { border-top: 1px solid #f3eedc; }
+  .ref-group-header {
+    padding: 0.55rem 1rem 0.3rem; font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: #6d6240;
+    position: sticky; top: 0; background: #fff;
+  }
+  .ref-option {
+    padding: 0.5rem 1rem 0.5rem 1.75rem;
+    cursor: pointer;
+    transition: background 0.08s;
+  }
+  .ref-option:hover, .ref-option.active {
+    background: var(--accent-soft);
+  }
+  .ref-option-label {
+    font-size: 0.875rem; font-weight: 500; color: #2a2a2a; line-height: 1.25;
+  }
+  .ref-option-full {
+    font-size: 0.72rem; color: #9a9485; margin-top: 0.1rem; line-height: 1.2;
+  }
+  .ref-option:hover .ref-option-label,
+  .ref-option.active .ref-option-label { color: #5b4d28; }
+  .ref-option:hover .ref-option-full,
+  .ref-option.active .ref-option-full { color: #7a6d3e; }
+  .ref-option mark {
+    background: rgba(179,153,98,0.35); color: inherit;
+    border-radius: 2px; padding: 0 1px;
+  }
+  .ref-empty {
+    padding: 1.75rem 1rem; text-align: center; color: #8a8474;
+    font-size: 0.875rem;
+  }
   .row-highlight { background: #f8f3e3; }
   .row-highlight td:first-child { border-left: 3px solid var(--accent); padding-left: calc(1rem - 3px); }
   table { width: 100%; border-collapse: collapse; }
@@ -249,12 +303,17 @@
           <form id="form-guiada" class="space-y-5">
             <div>
               <label class="block text-sm font-medium text-stone-700 mb-2">Elige tu alfombra</label>
-              <div class="relative">
+              <div class="relative ref-combo">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                <input type="text" id="ref" list="refs-datalist" autocomplete="off" required
+                <input type="text" id="ref" autocomplete="off" required
                        placeholder="Buscar..."
                        class="input-line pl-10" />
-                <datalist id="refs-datalist"></datalist>
+                <div id="ref-dropdown" class="ref-dropdown hidden">
+                  <div class="ref-dropdown-header">
+                    <span id="ref-result-count">— referencias</span>
+                  </div>
+                  <div id="ref-dropdown-list" class="ref-dropdown-list"></div>
+                </div>
               </div>
             </div>
 
@@ -400,7 +459,6 @@
 </div>
 
 <script>
-const refsDatalist = document.getElementById('refs-datalist');
 const formGuiada = document.getElementById('form-guiada');
 const formNL = document.getElementById('form-nl');
 const iaBubble = document.getElementById('ia-bubble');
@@ -522,20 +580,143 @@ document.querySelectorAll('.pill[data-forma]').forEach(p => {
   });
 });
 
-// Catalogo para autocomplete + set de referencias validas
+// Catalogo para dropdown + set de referencias validas
 let validRefs = new Set();
 const validRefsByLower = new Map();
-fetch('/api/refs').then(r => r.json()).then(refs => {
-  refsDatalist.innerHTML = refs.map(r => `<option value="${r}">`).join('');
-  validRefs = new Set(refs);
-  refs.forEach(r => validRefsByLower.set(r.toLowerCase(), r));
-});
+let refGroups = [];
 
 function findCanonicalRef(text) {
   if (!text) return null;
   if (validRefs.has(text)) return text;
   return validRefsByLower.get(text.toLowerCase()) || null;
 }
+
+// ---------- Dropdown custom de referencias ----------
+const refInput = document.getElementById('ref');
+const refDropdown = document.getElementById('ref-dropdown');
+const refDropdownList = document.getElementById('ref-dropdown-list');
+const refResultCount = document.getElementById('ref-result-count');
+let refActiveIndex = -1;
+
+function titleCase(s) {
+  // Preserva abreviaturas cortas (NX, OSC, NL, etc.) intactas
+  return s.split(' ').map(w => {
+    if (w.length <= 2) return w;
+    if (/^\d/.test(w)) return w;  // numeros tal cual: "01", "850"
+    return w.charAt(0) + w.slice(1).toLowerCase();
+  }).join(' ');
+}
+
+function escRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function highlightMatch(text, query) {
+  const safe = escapeHtml(text);
+  if (!query) return safe;
+  const re = new RegExp(escRegex(query), 'gi');
+  return safe.replace(re, m => `<mark>${m}</mark>`);
+}
+
+function renderRefDropdown(query) {
+  const q = (query || '').trim().toLowerCase();
+  const filtered = [];
+  let total = 0;
+  for (const grupo of refGroups) {
+    const matches = grupo.colores.filter(c =>
+      !q
+      || c.ref.toLowerCase().includes(q)
+      || grupo.coleccion.toLowerCase().includes(q)
+    );
+    if (matches.length) {
+      filtered.push({coleccion: grupo.coleccion, matches});
+      total += matches.length;
+    }
+  }
+  refResultCount.textContent =
+    total === 0 ? 'Sin resultados' :
+    total === 1 ? '1 referencia' :
+    `${total} referencias`;
+  if (total === 0) {
+    refDropdownList.innerHTML = '<div class="ref-empty">No encontramos nada con esa búsqueda.</div>';
+    return;
+  }
+  let html = '';
+  let optionIdx = 0;
+  for (const g of filtered) {
+    html += '<div class="ref-group">';
+    html += `<div class="ref-group-header">${escapeHtml(titleCase(g.coleccion))}</div>`;
+    for (const c of g.matches) {
+      html += `<div class="ref-option" data-ref="${escapeHtml(c.ref)}" data-idx="${optionIdx}">
+        <div class="ref-option-label">${highlightMatch(titleCase(c.label), q)}</div>
+        <div class="ref-option-full">${highlightMatch(titleCase(c.ref), q)}</div>
+      </div>`;
+      optionIdx++;
+    }
+    html += '</div>';
+  }
+  refDropdownList.innerHTML = html;
+  refActiveIndex = -1;
+}
+
+function openRefDropdown() {
+  refDropdown.classList.remove('hidden');
+  renderRefDropdown(refInput.value);
+}
+function closeRefDropdown() {
+  refDropdown.classList.add('hidden');
+  refActiveIndex = -1;
+}
+function setRefActive(idx) {
+  const opts = refDropdownList.querySelectorAll('.ref-option');
+  opts.forEach(o => o.classList.remove('active'));
+  if (idx < 0 || idx >= opts.length) { refActiveIndex = -1; return; }
+  refActiveIndex = idx;
+  const target = opts[idx];
+  target.classList.add('active');
+  target.scrollIntoView({block: 'nearest'});
+}
+
+refInput.addEventListener('focus', openRefDropdown);
+refInput.addEventListener('input', () => renderRefDropdown(refInput.value));
+refInput.addEventListener('keydown', (e) => {
+  const opts = refDropdownList.querySelectorAll('.ref-option');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (refDropdown.classList.contains('hidden')) { openRefDropdown(); return; }
+    setRefActive(Math.min(refActiveIndex + 1, opts.length - 1));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    setRefActive(Math.max(refActiveIndex - 1, 0));
+  } else if (e.key === 'Enter') {
+    if (!refDropdown.classList.contains('hidden') && refActiveIndex >= 0) {
+      e.preventDefault();
+      refInput.value = opts[refActiveIndex].dataset.ref;
+      closeRefDropdown();
+    }
+  } else if (e.key === 'Escape') {
+    closeRefDropdown();
+  }
+});
+refDropdownList.addEventListener('mousedown', (e) => {
+  // mousedown (no click) para que dispare antes del blur del input
+  const opt = e.target.closest('.ref-option');
+  if (opt) {
+    e.preventDefault();
+    refInput.value = opt.dataset.ref;
+    closeRefDropdown();
+  }
+});
+document.addEventListener('mousedown', (e) => {
+  if (!refInput.contains(e.target) && !refDropdown.contains(e.target)) {
+    closeRefDropdown();
+  }
+});
+
+fetch('/api/refs-grouped').then(r => r.json()).then(data => {
+  refGroups = data;
+  const allRefs = data.flatMap(g => g.colores.map(c => c.ref));
+  validRefs = new Set(allRefs);
+  allRefs.forEach(r => validRefsByLower.set(r.toLowerCase(), r));
+});
 
 const STATUS_BADGES = {
   'Correcto': 'badge-correcto',
