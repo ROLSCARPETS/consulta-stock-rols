@@ -898,7 +898,9 @@ function renderRows(filas) {
     const libre = fmtNum(f.longitud_no_comprometida, 2);
     const rowCls = i === 0 ? 'row-highlight' : '';
 
-    const tieneObs = f.estado === 'Ver Anotaciones' && (f.obs_revision || f.obs_venta);
+    // Cualquier pieza con anotaciones (no solo las de estado "Ver Anotaciones")
+    // muestra el toggle ▾ para desplegar el detalle.
+    const tieneObs = !!(f.obs_revision || f.obs_venta);
     const badgeClass = `badge-status ${cls}${tieneObs ? ' obs-toggle' : ''}`;
     const badgeAttrs = tieneObs ? ` data-toggle-obs="${i}" title="${escapeHtml(t('ui.results.obs_tooltip'))}"` : '';
     const hint = tieneObs ? ' <span style="font-size:0.7em;opacity:0.65;">▾</span>' : '';
