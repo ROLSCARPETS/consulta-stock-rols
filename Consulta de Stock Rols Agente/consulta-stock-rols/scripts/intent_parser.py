@@ -52,6 +52,12 @@ def _get_client():
     return _client
 
 
+LANG_NAMES = {
+    "es": "espanol", "en": "english", "fr": "francais",
+    "de": "aleman", "it": "italiano", "nl": "neerlandes",
+}
+
+
 def _build_system_prompt(catalogo: list[str], colecciones: list[str]) -> str:
     """System prompt determinista — clave para que OpenAI aproveche caching."""
     catalogo_txt = "\n".join(catalogo)
@@ -126,7 +132,8 @@ JSON sea valido y los nombres exactos."""
 
 def parse_with_ai(query: str, last_ref: Optional[str],
                   catalogo: list[str], colecciones: list[str],
-                  *, model: str = "gpt-4o-mini") -> Optional[dict]:
+                  *, model: str = "gpt-4o-mini",
+                  lang: str = "es") -> Optional[dict]:
     """Devuelve dict {intent, ref, coleccion, ancho_m, largo_m} o None.
 
     None puede significar: SDK no instalado, sin API key, error de red,
@@ -141,6 +148,11 @@ def parse_with_ai(query: str, last_ref: Optional[str],
     user_msg = f"Consulta del usuario: {query}"
     if last_ref:
         user_msg += f"\nUltima referencia consultada (contexto): {last_ref}"
+    # Pista de idioma para el extractor — solo afecta a campos textuales
+    # libres si los hubiera; los campos de intent/ref/coleccion son codigos
+    # que NO se traducen.
+    lang_name = LANG_NAMES.get(lang, "espanol")
+    user_msg += f"\nIdioma del usuario: {lang_name} (codigo {lang})."
 
     t0 = time.monotonic()
     try:

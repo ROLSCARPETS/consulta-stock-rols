@@ -229,6 +229,28 @@
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .empty-state { text-align: center; color: #8a8474; padding: 3rem 1rem; font-size: 0.9rem; }
+  /* Selector de idioma */
+  .lang-block {
+    padding: 0 0.5rem; margin-bottom: 0.75rem;
+  }
+  .lang-block .lang-label {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(214,212,200,0.55); font-weight: 600;
+    margin-bottom: 0.4rem; display: block;
+  }
+  .lang-buttons { display: flex; gap: 0.3rem; }
+  .lang-btn {
+    flex: 1; padding: 0.4rem 0.5rem;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+    border: 1px solid rgba(214,212,200,0.18);
+    background: transparent; color: var(--text-sidebar);
+    border-radius: 0.5rem; cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .lang-btn:hover { background: var(--bg-sidebar-hover); color: var(--text-sidebar-active); }
+  .lang-btn.active {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
 </style>
 </head>
 <body class="min-h-screen">
@@ -242,22 +264,30 @@
     </div>
 
     <nav class="space-y-1 flex-grow">
-      <a href="#"><span class="check"></span>Inicio</a>
-      <a href="#"><span class="check"></span>Pedidos realizados</a>
-      <a href="#"><span class="check"></span>Presupuestos en borrador</a>
-      <a href="#"><span class="check"></span>Muestras</a>
-      <a href="#" class="active"><span class="check"></span>Consulta de stock</a>
-      <a href="#"><span class="check"></span>Tu tarifa</a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.home">Inicio</span></a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.orders">Pedidos realizados</span></a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.drafts">Presupuestos en borrador</span></a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.samples">Muestras</span></a>
+      <a href="#" class="active"><span class="check"></span><span data-i18n="ui.sidebar.stock">Consulta de stock</span></a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.tariff">Tu tarifa</span></a>
     </nav>
 
     <div class="space-y-2 mb-6">
-      <button class="btn-outline w-full">Calcula tu presupuesto</button>
-      <button class="btn-outline w-full">Solicita nuevas muestras</button>
+      <button class="btn-outline w-full" data-i18n="ui.sidebar.calculate_quote">Calcula tu presupuesto</button>
+      <button class="btn-outline w-full" data-i18n="ui.sidebar.request_samples">Solicita nuevas muestras</button>
+    </div>
+
+    <div class="lang-block">
+      <span class="lang-label" data-i18n="ui.sidebar.language">Idioma</span>
+      <div class="lang-buttons">
+        <button class="lang-btn" data-lang="es">ES</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
     </div>
 
     <div class="space-y-1 pt-4 border-t border-stone-700/50">
-      <a href="#"><span class="check"></span>Configuración</a>
-      <a href="#"><span class="check"></span>Cerrar sesión</a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.settings">Configuración</span></a>
+      <a href="#"><span class="check"></span><span data-i18n="ui.sidebar.logout">Cerrar sesión</span></a>
     </div>
   </aside>
 
@@ -268,19 +298,19 @@
     <div class="flex justify-between items-start mb-6">
       <div>
         <p class="breadcrumb mb-1">
-          <a href="#">Inicio</a> · <span>Consulta de stock</span>
+          <a href="#" data-i18n="ui.header.breadcrumb_home">Inicio</a> · <span data-i18n="ui.header.breadcrumb_stock">Consulta de stock</span>
         </p>
       </div>
       <div class="flex items-center gap-3">
-        <span class="sync-pill"><span class="dot"></span>Stock sincronizado · {{ sync_time }}</span>
+        <span class="sync-pill"><span class="dot"></span><span data-i18n="ui.header.stock_synced">Stock sincronizado</span> · {{ sync_time }}</span>
       </div>
     </div>
 
     <!-- Title -->
     <h1 class="text-3xl font-light text-stone-800 mb-2">
-      Consulta de <span class="font-medium relative">stock<span class="absolute left-0 -bottom-1 w-full h-0.5 bg-stone-800"></span></span>
+      <span data-i18n="ui.page.title_part1">Consulta de</span> <span class="font-medium relative"><span data-i18n="ui.page.title_part2">stock</span><span class="absolute left-0 -bottom-1 w-full h-0.5 bg-stone-800"></span></span>
     </h1>
-    <p class="text-stone-600 max-w-2xl mb-8">
+    <p class="text-stone-600 max-w-2xl mb-8" data-i18n-html="ui.page.subtitle_html">
       Tienes <strong>dos formas</strong> de consultar disponibilidad: rellena el formulario con modelo, forma y medidas, o pregúntale directamente al asistente en lenguaje natural.
     </p>
 
@@ -295,22 +325,22 @@
           <div class="flex items-start gap-3 mb-5">
             <div class="step-badge">1</div>
             <div>
-              <h2 class="text-lg font-semibold text-stone-800">Búsqueda guiada</h2>
-              <p class="text-sm text-stone-500">Filtra por alfombra, forma y medidas</p>
+              <h2 class="text-lg font-semibold text-stone-800" data-i18n="ui.search_form.step_label">Búsqueda guiada</h2>
+              <p class="text-sm text-stone-500" data-i18n="ui.search_form.step_subtitle">Filtra por alfombra, forma y medidas</p>
             </div>
           </div>
 
           <form id="form-guiada" class="space-y-5">
             <div>
-              <label class="block text-sm font-medium text-stone-700 mb-2">Elige tu alfombra</label>
+              <label class="block text-sm font-medium text-stone-700 mb-2" data-i18n="ui.search_form.alfombra_label">Elige tu alfombra</label>
               <div class="relative ref-combo">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 <input type="text" id="ref" autocomplete="off" required
-                       placeholder="Buscar..."
+                       placeholder="Buscar..." data-i18n-placeholder="ui.search_form.search_placeholder"
                        class="input-line pl-10" />
                 <div id="ref-dropdown" class="ref-dropdown hidden">
                   <div class="ref-dropdown-header">
-                    <span id="ref-result-count">— referencias</span>
+                    <span id="ref-result-count">—</span>
                   </div>
                   <div id="ref-dropdown-list" class="ref-dropdown-list"></div>
                 </div>
@@ -318,41 +348,41 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-stone-700 mb-2">Elige la forma</label>
+              <label class="block text-sm font-medium text-stone-700 mb-2" data-i18n="ui.search_form.forma_label">Elige la forma</label>
               <div class="flex gap-3">
                 <button type="button" class="pill active" data-forma="rectangular">
-                  <span class="swatch"></span>Rectangular
+                  <span class="swatch"></span><span data-i18n="ui.search_form.rectangular">Rectangular</span>
                 </button>
                 <button type="button" class="pill" data-forma="circular">
-                  <span class="w-3.5 h-3.5 rounded-full border-2 border-stone-400"></span>Circular
+                  <span class="w-3.5 h-3.5 rounded-full border-2 border-stone-400"></span><span data-i18n="ui.search_form.circular">Circular</span>
                 </button>
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-stone-700 mb-2">Medidas totales útiles</label>
+              <label class="block text-sm font-medium text-stone-700 mb-2" data-i18n="ui.search_form.medidas_label">Medidas totales útiles</label>
               <div id="medidas-rectangular" class="grid grid-cols-2 gap-3">
                 <div>
                   <input type="number" id="ancho" min="0" step="1" placeholder="Introduce el ancho en cm"
-                         class="input-line" />
-                  <p class="text-xs text-stone-400 mt-1.5">⊙ Ancho · max — cm</p>
+                         data-i18n-placeholder="ui.search_form.ancho_placeholder" class="input-line" />
+                  <p class="text-xs text-stone-400 mt-1.5">⊙ <span data-i18n="ui.search_form.ancho_hint">Ancho · max — cm</span></p>
                 </div>
                 <div>
                   <input type="number" id="largo" min="0" step="1" placeholder="Introduce el largo en cm"
-                         class="input-line" />
-                  <p class="text-xs text-stone-400 mt-1.5">⊙ Largo · max — cm</p>
+                         data-i18n-placeholder="ui.search_form.largo_placeholder" class="input-line" />
+                  <p class="text-xs text-stone-400 mt-1.5">⊙ <span data-i18n="ui.search_form.largo_hint">Largo · max — cm</span></p>
                 </div>
               </div>
               <div id="medidas-circular" class="hidden">
                 <input type="number" id="diametro" min="0" step="1" placeholder="Introduce el diámetro en cm"
-                       class="input-line" />
-                <p class="text-xs text-stone-400 mt-1.5">⊙ Diámetro · max — cm</p>
+                       data-i18n-placeholder="ui.search_form.diametro_placeholder" class="input-line" />
+                <p class="text-xs text-stone-400 mt-1.5">⊙ <span data-i18n="ui.search_form.diametro_hint">Diámetro · max — cm</span></p>
               </div>
             </div>
 
             <div class="flex justify-end pt-1">
               <button type="submit" id="btn-guiada" class="btn-accent flex items-center gap-2">
-                <span id="btn-guiada-text">Consultar stock →</span>
+                <span id="btn-guiada-text" data-i18n="ui.search_form.submit">Consultar stock →</span>
                 <span id="btn-guiada-spinner" class="spinner hidden"></span>
               </button>
             </div>
@@ -364,8 +394,8 @@
           <div class="flex items-start gap-3 mb-5">
             <div class="step-badge">2</div>
             <div>
-              <h2 class="text-lg font-semibold text-stone-800">Pregunta al asistente directamente</h2>
-              <p class="text-sm text-stone-500">Escribe tu consulta en lenguaje natural y te responderá en el panel de la derecha.</p>
+              <h2 class="text-lg font-semibold text-stone-800" data-i18n="ui.chat.step_label">Pregunta al asistente directamente</h2>
+              <p class="text-sm text-stone-500" data-i18n="ui.chat.step_subtitle">Escribe tu consulta en lenguaje natural y te responderá en el panel de la derecha.</p>
             </div>
           </div>
 
@@ -374,10 +404,11 @@
               <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
               <input type="text" id="nl-query" autocomplete="off"
                      placeholder="Ej. ¿Tienes más de 30 ML en LUNA PLATINIUM?"
+                     data-i18n-placeholder="ui.chat.placeholder"
                      class="input-line pl-10" />
             </div>
             <button type="submit" id="btn-nl" class="btn-accent flex items-center gap-2 whitespace-nowrap">
-              <span id="btn-nl-text">Enviar →</span>
+              <span id="btn-nl-text" data-i18n="ui.chat.submit">Enviar →</span>
               <span id="btn-nl-spinner" class="spinner hidden"></span>
             </button>
           </form>
@@ -391,7 +422,7 @@
         <div id="search-context" style="display: none;">
           <div class="search-pill">
             <svg class="icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            <span class="label">Búsqueda activa</span>
+            <span class="label" data-i18n="ui.search_context.label">Búsqueda activa</span>
             <span class="value" id="search-context-text"></span>
           </div>
         </div>
@@ -399,25 +430,25 @@
         <!-- Burbuja Usuario (chat) -->
         <div id="user-section" class="gap-3 justify-end" style="display: none;">
           <div class="user-bubble flex-grow" id="user-bubble"></div>
-          <div class="user-avatar">TÚ</div>
+          <div class="user-avatar" data-i18n="ui.chat.user_avatar">TÚ</div>
         </div>
 
         <!-- Burbuja IA -->
         <div class="flex gap-3" id="ia-section">
-          <div class="ia-avatar">IA</div>
+          <div class="ia-avatar" data-i18n="ui.chat.ai_avatar">IA</div>
           <div class="ia-bubble flex-grow" id="ia-bubble">
-            <p class="text-stone-500">Aquí verás la respuesta del asistente cuando lances una consulta. Puedes usar el formulario o escribir en lenguaje natural.</p>
+            <p class="text-stone-500" data-i18n="ui.chat.ai_initial">Aquí verás la respuesta del asistente cuando lances una consulta. Puedes usar el formulario o escribir en lenguaje natural.</p>
           </div>
         </div>
 
         <!-- Card tabla -->
         <div class="card overflow-hidden">
           <div class="px-6 py-4 border-b border-stone-200 flex justify-between items-center">
-            <h3 class="text-xs font-semibold text-stone-600 tracking-wider uppercase">Piezas disponibles para completar la consulta</h3>
+            <h3 class="text-xs font-semibold text-stone-600 tracking-wider uppercase" data-i18n="ui.results.title">Piezas disponibles para completar la consulta</h3>
             <span id="tabla-vista-toggle" class="hidden text-xs text-stone-500"></span>
           </div>
 
-          <div id="tabla-empty" class="empty-state">
+          <div id="tabla-empty" class="empty-state" data-i18n="ui.results.empty_initial">
             Lanza una consulta para ver las piezas disponibles.
           </div>
 
@@ -425,12 +456,12 @@
             <table>
               <thead>
                 <tr>
-                  <th>Descripción</th>
-                  <th>Nº Lote</th>
-                  <th>Ancho</th>
-                  <th>Long. no comprometida (ML)</th>
-                  <th>Estado pieza</th>
-                  <th class="col-fab">Fecha fin fabricación</th>
+                  <th data-i18n="ui.results.col_descripcion">Descripción</th>
+                  <th data-i18n="ui.results.col_lote">Nº Lote</th>
+                  <th data-i18n="ui.results.col_ancho">Ancho</th>
+                  <th data-i18n="ui.results.col_libre">Long. no comprometida (ML)</th>
+                  <th data-i18n="ui.results.col_estado">Estado pieza</th>
+                  <th class="col-fab" data-i18n="ui.results.col_fab_date">Fecha fin fabricación</th>
                 </tr>
               </thead>
               <tbody id="tabla-body"></tbody>
@@ -439,13 +470,13 @@
 
           <div id="tabla-footer" class="hidden px-6 py-3 border-t border-stone-200 flex justify-between items-center">
             <span class="text-xs text-stone-500" id="tabla-conteo"></span>
-            <a href="#" class="link-action" id="tabla-ver-todas">Ver todas →</a>
+            <a href="#" class="link-action" id="tabla-ver-todas" data-i18n="ui.results.view_all">Ver todas →</a>
           </div>
         </div>
 
         <!-- Alternativas -->
         <div id="alts-section" class="hidden card p-5 bg-amber-50/40 border-amber-200">
-          <h4 class="text-sm font-semibold text-amber-900 mb-3">Alternativas si el cliente acepta</h4>
+          <h4 class="text-sm font-semibold text-amber-900 mb-3" data-i18n="ui.alternatives.title">Alternativas si el cliente acepta</h4>
           <div id="alts-content" class="text-sm text-stone-700 space-y-2"></div>
         </div>
 
@@ -459,6 +490,77 @@
 </div>
 
 <script>
+// ============================================================
+// i18n
+// ============================================================
+const SUPPORTED_LANGS = ['es', 'en'];
+let CURRENT_LANG = (() => {
+  const saved = localStorage.getItem('app-lang');
+  return (saved && SUPPORTED_LANGS.includes(saved)) ? saved : 'es';
+})();
+const TRANSLATIONS = {};
+
+function _i18nLookup(key, lang) {
+  let val = TRANSLATIONS[lang];
+  if (!val) return null;
+  for (const part of key.split('.')) {
+    if (val && typeof val === 'object') val = val[part];
+    else return null;
+    if (val === undefined) return null;
+  }
+  return val;
+}
+
+function t(key, params) {
+  let val = _i18nLookup(key, CURRENT_LANG);
+  if (val == null && CURRENT_LANG !== 'es') val = _i18nLookup(key, 'es');
+  if (val == null) return key;  // ultimo recurso: la clave bruta
+  if (typeof val === 'string' && params) {
+    return val.replace(/\{(\w+)\}/g, (_, k) => params[k] !== undefined ? params[k] : `{${k}}`);
+  }
+  return val;
+}
+
+function tCount(keyBase, count, params) {
+  const suffix = count === 1 ? '.one' : '.other';
+  return t(keyBase + suffix, Object.assign({count}, params || {}));
+}
+
+async function loadTranslations(lang) {
+  if (TRANSLATIONS[lang]) return;
+  try {
+    const res = await fetch(`/static/i18n/${lang}.json`);
+    if (res.ok) TRANSLATIONS[lang] = await res.json();
+  } catch (e) {
+    console.warn(`[i18n] error cargando ${lang}.json`, e);
+  }
+}
+
+function applyStaticTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n'));
+    if (typeof v === 'string') el.textContent = v;
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n-html'));
+    if (typeof v === 'string') el.innerHTML = v;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n-placeholder'));
+    if (typeof v === 'string') el.setAttribute('placeholder', v);
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n-title'));
+    if (typeof v === 'string') el.setAttribute('title', v);
+  });
+}
+
+function highlightActiveLangBtn() {
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === CURRENT_LANG);
+  });
+}
+
 const formGuiada = document.getElementById('form-guiada');
 const formNL = document.getElementById('form-nl');
 const iaBubble = document.getElementById('ia-bubble');
@@ -514,7 +616,7 @@ function respondToAlternativasOffer(prev) {
   const ref = findCanonicalRef(refRaw) || refRaw;
 
   if (!alts || !alts.found || alts.sin_alternativas) {
-    iaBubble.innerHTML = `No tenemos alternativas registradas para <strong>${escapeHtml(ref)}</strong>.`;
+    iaBubble.innerHTML = marked.parseInline(t('msg.alts_followup.no_alternatives', {ref: ref}));
     altsSection.classList.add('hidden');
     return;
   }
@@ -522,15 +624,21 @@ function respondToAlternativasOffer(prev) {
   const conStock = todas.filter(e => e.tiene_stock).length;
   const total = todas.length;
   if (total === 0) {
-    iaBubble.innerHTML = `No hay alternativas para <strong>${escapeHtml(ref)}</strong>.`;
+    iaBubble.innerHTML = marked.parseInline(t('msg.alts_followup.no_alternatives', {ref: ref}));
     altsSection.classList.add('hidden');
     return;
   }
+  let key;
   if (conStock === 0) {
-    iaBubble.innerHTML = `Hay ${total} alternativa${total === 1 ? '' : 's'} para <strong>${escapeHtml(ref)}</strong> pero <strong>ninguna tiene stock</strong> para tu medida.`;
+    key = total === 1 ? 'msg.alts_followup.exists_no_stock_one' : 'msg.alts_followup.exists_no_stock_other';
+  } else if (total === 1) {
+    key = 'msg.alts_followup.with_stock_one_one';
+  } else if (conStock === 1) {
+    key = 'msg.alts_followup.with_stock_other_one';
   } else {
-    iaBubble.innerHTML = `Aquí tienes las alternativas para <strong>${escapeHtml(ref)}</strong>: <strong>${conStock} de ${total}</strong> con stock para tu medida.`;
+    key = 'msg.alts_followup.with_stock_other_other';
   }
+  iaBubble.innerHTML = marked.parseInline(t(key, {ref: ref, total: total, con_stock: conStock}));
   renderAlternativas(alts);
 }
 
@@ -632,11 +740,10 @@ function renderRefDropdown(query) {
     }
   }
   refResultCount.textContent =
-    total === 0 ? 'Sin resultados' :
-    total === 1 ? '1 referencia' :
-    `${total} referencias`;
+    total === 0 ? t('ui.dropdown.result_count_zero') :
+    tCount('ui.dropdown.result_count', total);
   if (total === 0) {
-    refDropdownList.innerHTML = '<div class="ref-empty">No encontramos nada con esa búsqueda.</div>';
+    refDropdownList.innerHTML = `<div class="ref-empty">${escapeHtml(t('ui.dropdown.empty'))}</div>`;
     return;
   }
   let html = '';
@@ -750,13 +857,14 @@ function escapeHtml(s) {
 }
 
 function displayEstado(estado) {
-  if (estado === 'Lanzada') return 'En fabricación';
-  return estado;
+  const key = `ui.estados.${estado}`;
+  const v = t(key);
+  return (v && v !== key) ? v : (estado || '').toUpperCase();
 }
 
 function renderRows(filas) {
   if (!filas || filas.length === 0) {
-    tablaEmpty.textContent = 'No hay piezas que cumplan los criterios.';
+    tablaEmpty.textContent = t('ui.results.empty_no_match');
     tablaEmpty.classList.remove('hidden');
     tablaWrapper.classList.add('hidden');
     tablaFooter.classList.add('hidden');
@@ -765,7 +873,7 @@ function renderRows(filas) {
   tablaEmpty.classList.add('hidden');
   tablaWrapper.classList.remove('hidden');
   tablaFooter.classList.remove('hidden');
-  tablaConteo.textContent = `Mostrando ${filas.length} pieza${filas.length === 1 ? '' : 's'}`;
+  tablaConteo.textContent = tCount('ui.results.showing', filas.length);
 
   // Mostrar/ocultar la columna "Fecha fin fabricacion" segun haya piezas en fabricacion
   const hayFab = filas.some(f => f.tipo === 'fabricacion');
@@ -781,13 +889,13 @@ function renderRows(filas) {
 
     const tieneObs = f.estado === 'Ver Anotaciones' && (f.obs_revision || f.obs_venta);
     const badgeClass = `badge-status ${cls}${tieneObs ? ' obs-toggle' : ''}`;
-    const badgeAttrs = tieneObs ? ` data-toggle-obs="${i}" title="Click para ver anotaciones"` : '';
+    const badgeAttrs = tieneObs ? ` data-toggle-obs="${i}" title="${escapeHtml(t('ui.results.obs_tooltip'))}"` : '';
     const hint = tieneObs ? ' <span style="font-size:0.7em;opacity:0.65;">▾</span>' : '';
 
     let fechaTxt = '';
     if (f.tipo === 'fabricacion') {
       const fechaRaw = f.fecha_retraso || f.fecha_disponibilidad;
-      fechaTxt = fechaRaw ? fmtFecha(fechaRaw) : '<span class="text-stone-400 italic">No especificada</span>';
+      fechaTxt = fechaRaw ? fmtFecha(fechaRaw) : `<span class="text-stone-400 italic">${escapeHtml(t('ui.results.fab_date_unspecified'))}</span>`;
     }
 
     let html = `
@@ -802,8 +910,8 @@ function renderRows(filas) {
 
     if (tieneObs) {
       const partes = [];
-      if (f.obs_revision) partes.push(`<div><strong>Revisión:</strong> ${escapeHtml(f.obs_revision)}</div>`);
-      if (f.obs_venta) partes.push(`<div><strong>Venta:</strong> ${escapeHtml(f.obs_venta)}</div>`);
+      if (f.obs_revision) partes.push(`<div><strong>${escapeHtml(t('ui.results.obs_revision'))}</strong> ${escapeHtml(f.obs_revision)}</div>`);
+      if (f.obs_venta) partes.push(`<div><strong>${escapeHtml(t('ui.results.obs_venta'))}</strong> ${escapeHtml(f.obs_venta)}</div>`);
       html += `<tr class="obs-row hidden" data-obs-row="${i}"><td colspan="6"><div class="obs-content">${partes.join('')}</div></td></tr>`;
     }
 
@@ -824,8 +932,8 @@ function renderAltEntry(e) {
   const tieneStock = e.tiene_stock;
   const headerCls = tieneStock ? 'text-emerald-800' : 'text-stone-500';
   const indicador = tieneStock
-    ? `<span class="text-xs text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">${piezas.length} en stock</span>`
-    : `<span class="text-xs text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full">sin stock para esta medida</span>`;
+    ? `<span class="text-xs text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">${escapeHtml(tCount('ui.alternatives.in_stock', piezas.length))}</span>`
+    : `<span class="text-xs text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full">${escapeHtml(t('ui.alternatives.no_stock_for_size'))}</span>`;
   let tablaHTML = '';
   if (tieneStock) {
     tablaHTML = `
@@ -833,10 +941,10 @@ function renderAltEntry(e) {
         <table class="w-full text-xs">
           <thead>
             <tr class="text-stone-500">
-              <th class="text-left py-1 pr-3 font-medium">Lote</th>
-              <th class="text-left py-1 pr-3 font-medium">Ancho</th>
-              <th class="text-left py-1 pr-3 font-medium">Long. no comprometida</th>
-              <th class="text-left py-1 font-medium">Estado</th>
+              <th class="text-left py-1 pr-3 font-medium">${escapeHtml(t('ui.alternatives.col_lote'))}</th>
+              <th class="text-left py-1 pr-3 font-medium">${escapeHtml(t('ui.alternatives.col_ancho'))}</th>
+              <th class="text-left py-1 pr-3 font-medium">${escapeHtml(t('ui.alternatives.col_libre'))}</th>
+              <th class="text-left py-1 font-medium">${escapeHtml(t('ui.alternatives.col_estado'))}</th>
             </tr>
           </thead>
           <tbody>
@@ -874,12 +982,12 @@ function renderAlternativas(alts) {
   }
   let html = '';
   if (alts.tier_1 && alts.tier_1.length) {
-    html += '<div><div class="font-medium text-stone-900 mb-2 text-sm uppercase tracking-wider">Tier I · misma familia, otro diseño</div><div class="space-y-3">';
+    html += `<div><div class="font-medium text-stone-900 mb-2 text-sm uppercase tracking-wider">${escapeHtml(t('ui.alternatives.tier1_header'))}</div><div class="space-y-3">`;
     alts.tier_1.forEach(e => { html += renderAltEntry(e); });
     html += '</div></div>';
   }
   if (alts.tier_2 && alts.tier_2.length) {
-    html += '<div class="mt-4"><div class="font-medium text-stone-900 mb-2 text-sm uppercase tracking-wider">Tier II · otra construcción / colorido similar</div><div class="space-y-3">';
+    html += `<div class="mt-4"><div class="font-medium text-stone-900 mb-2 text-sm uppercase tracking-wider">${escapeHtml(t('ui.alternatives.tier2_header'))}</div><div class="space-y-3">`;
     alts.tier_2.forEach(e => { html += renderAltEntry(e); });
     html += '</div></div>';
   }
@@ -899,7 +1007,7 @@ async function lanzarConsulta(payload, endpoint, btnId) {
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(Object.assign({}, payload, {lang: CURRENT_LANG})),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error en la consulta');
@@ -1001,6 +1109,23 @@ formNL.addEventListener('submit', e => {
 
   lanzarConsulta({ query: q, last_ref: lastRef }, '/api/consulta-nl', 'btn-nl');
 });
+
+// ============================================================
+// i18n init: cargar traducciones, aplicarlas, conectar selector
+// ============================================================
+(async () => {
+  await Promise.all([loadTranslations(CURRENT_LANG), loadTranslations('es')]);
+  applyStaticTranslations();
+  highlightActiveLangBtn();
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newLang = btn.dataset.lang;
+      if (!newLang || newLang === CURRENT_LANG) return;
+      localStorage.setItem('app-lang', newLang);
+      location.reload();
+    });
+  });
+})();
 </script>
 
 </body>

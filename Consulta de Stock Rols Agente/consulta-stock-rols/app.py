@@ -9,6 +9,7 @@ Usa scripts/buscar_stock.py como motor.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 import time
@@ -65,6 +66,92 @@ def _pertenece_a_catalogo(desc: str, colecciones: dict) -> bool:
 
 DESCRIPCIONES_ACTIVAS = sorted(d for d in DESCRIPCIONES if _pertenece_a_catalogo(d, COLECCIONES))
 print(f"  -> {len(DESCRIPCIONES_ACTIVAS)} referencias activas (en catalogo)")
+
+# ---------------------------------------------------------------------------
+# Traducciones (i18n)
+# ---------------------------------------------------------------------------
+
+I18N_DIR = APP_DIR / "static" / "i18n"
+DEFAULT_LANG = "es"
+SUPPORTED_LANGS = ["es", "en"]
+TRANSLATIONS: dict = {}
+for _f in I18N_DIR.glob("*.json"):
+    try:
+        TRANSLATIONS[_f.stem] = json.loads(_f.read_text(encoding="utf-8"))
+    except Exception as _e:
+        print(f"[i18n] error cargando {_f.name}: {_e}")
+print(f"Traducciones cargadas: {sorted(TRANSLATIONS.keys())}")
+
+
+def _lookup_key(key: str, lang: str):
+    """Busca una clave dotted (p.ej. 'msg.stock.one') en el JSON del idioma."""
+    val = TRANSLATIONS.get(lang)
+    if val is None:
+        return None
+    for part in key.split("."):
+        if isinstance(val, dict):
+            val = val.get(part)
+        else:
+            return None
+        if val is None:
+            return None
+    return val
+
+
+def t(key: str, lang: str = DEFAULT_LANG, **params) -> str:
+    """Traduce una clave al idioma indicado. Si no existe, cae al ES.
+    Soporta interpolacion de parametros estilo str.format ({nombre})."""
+    if lang not in TRANSLATIONS:
+        lang = DEFAULT_LANG
+    val = _lookup_key(key, lang)
+    if val is None and lang != DEFAULT_LANG:
+        val = _lookup_key(key, DEFAULT_LANG)
+    if val is None:
+        return key  # ultimo recurso: la clave bruta
+    if isinstance(val, str) and params:
+        try:
+            return val.format(**params)
+        except (KeyError, IndexError):
+            return val
+    return val
+
+
+def t_count(key_base: str, count: int, lang: str = DEFAULT_LANG, **params) -> str:
+    """Variante para plurales: selecciona <key>_one si count==1, sino <key>_other."""
+    suffix = ".one" if count == 1 else ".other"
+    return t(key_base + suffix, lang, count=count, **params)
+
+
+def _coleccion_titulo(s: str) -> str:
+    """Title case para nombres de coleccion preservando abreviaturas cortas
+    (ej. NX, OP, NL) y numeros tal cual."""
+    if not s:
+        return s
+    return " ".join(
+        w if (len(w) <= 2 or not w.isalpha()) else w.capitalize()
+        for w in s.split()
+    )
+
+
+def _get_lang() -> str:
+    """Determina el idioma para la peticion actual. Prioridad:
+    1. JSON body 'lang' (POST), 2. query param 'lang' (GET),
+    3. cookie 'lang', 4. DEFAULT_LANG."""
+    lang = None
+    if request.method == "POST":
+        try:
+            data = request.get_json(silent=True) or {}
+            lang = (data.get("lang") or "").strip().lower() or None
+        except Exception:
+            pass
+    if not lang:
+        lang = (request.args.get("lang") or "").strip().lower() or None
+    if not lang:
+        lang = (request.cookies.get("lang") or "").strip().lower() or None
+    if lang not in TRANSLATIONS:
+        lang = DEFAULT_LANG
+    return lang
+
 
 LOAD_TIME = time.time()
 
@@ -228,8 +315,11 @@ def _formatear_resultado_para_tabla(resultado: dict) -> list[dict]:
     return filas
 
 
-def _ejecutar_consulta(ref, ancho, largo):
-    """Llama al motor y monta el dict de respuesta para el frontend."""
+def _ejecutar_consulta(ref, ancho, largo, lang: str = DEFAULT_LANG):
+    """Llama al motor y monta el dict de respuesta para el frontend.
+
+    `lang` se usa para localizar los mensajes que ven los usuarios.
+    """
     if not ref:
         return None
     resultado = bs.consulta_completa(
@@ -244,48 +334,45 @@ def _ejecutar_consulta(ref, ancho, largo):
             and not validacion["encaja_rotando"]):
         anchos = validacion["anchos_rollo_disponibles"]
         max_w, max_l = validacion["max_alfombra"]
-        # El maximo de pieza (max_alfombra) solo aplica si la coleccion es
-        # solo_alfombra=True. Para colecciones que tambien se venden como
-        # moqueta (corte de rollo), el largo no tiene tope: solo manda el
-        # ancho del rollo.
         solo_alfombra = validacion.get("solo_alfombra", False)
-        anchos_str = " y ".join(f"{a:g} m" for a in anchos)
-        col_nombre = validacion["coleccion"].title()
+        sep = t("msg.list_sep_and", lang)
+        anchos_str = sep.join(f"{a:g} m" for a in anchos)
+        col_nombre = _coleccion_titulo(validacion["coleccion"])
         problemas = []
         if ancho is not None and ancho > max(anchos):
-            problemas.append(f"el ancho **{ancho:g} m** supera el rollo máximo de **{max(anchos):g} m**")
+            problemas.append(t("msg.medida_invalida.ancho_excede", lang,
+                               ancho=f"{ancho:g}", max_ancho=f"{max(anchos):g}"))
         if solo_alfombra and largo is not None and largo > max_l:
-            problemas.append(f"el largo **{largo:g} m** supera la pieza máxima de **{max_l:g} m**")
-        detalle = "; ".join(problemas) if problemas else "no encaja en ninguna combinación de rollo"
+            problemas.append(t("msg.medida_invalida.largo_excede", lang,
+                               largo=f"{largo:g}", max_largo=f"{max_l:g}"))
+        detalle = "; ".join(problemas) if problemas else t("msg.medida_invalida.default_detalle", lang)
 
         # Sugerir la medida factible mas cercana (recortando dimensiones excedidas).
         sug_ancho = max(anchos) if (ancho is not None and ancho > max(anchos)) else ancho
         if solo_alfombra:
             sug_largo = max_l if (largo is not None and largo > max_l) else largo
         else:
-            sug_largo = largo  # Para moqueta, el largo no tiene limite
+            sug_largo = largo
         chips_medida = []
         if sug_ancho is not None and sug_largo is not None:
             chips_medida.append({
-                "label": f"{sug_ancho:g} × {sug_largo:g} m",
+                "label": t("msg.medida_invalida.chip_axb", lang,
+                           ancho=f"{sug_ancho:g}", largo=f"{sug_largo:g}"),
                 "ancho": sug_ancho, "largo": sug_largo,
             })
         elif sug_ancho is not None:
             chips_medida.append({
-                "label": f"{sug_ancho:g} m de ancho",
+                "label": t("msg.medida_invalida.chip_solo_ancho", lang, ancho=f"{sug_ancho:g}"),
                 "ancho": sug_ancho, "largo": None,
             })
         elif sug_largo is not None:
             chips_medida.append({
-                "label": f"{sug_largo:g} m de largo",
+                "label": t("msg.medida_invalida.chip_solo_largo", lang, largo=f"{sug_largo:g}"),
                 "ancho": None, "largo": sug_largo,
             })
 
-        mensaje = (
-            f"⚠️ La medida pedida no es posible en **{col_nombre}**: {detalle}. "
-            f"Los rollos vienen en **{anchos_str}** de ancho. "
-            f"¿Quieres que mire en otra medida que sí encaje?"
-        )
+        mensaje = t("msg.medida_invalida.header", lang,
+                    coleccion=col_nombre, detalle=detalle, anchos=anchos_str)
         return {
             "tipo": "medida_invalida",
             "mensaje": mensaje,
@@ -318,33 +405,28 @@ def _ejecutar_consulta(ref, ancho, largo):
 
     if tipo == "stock":
         mejor = resultado["stock"][0]
-        mensaje = (
-            f"Tenemos **{n_stock} {'pieza' if n_stock == 1 else 'piezas'}** que cumplen tu consulta. "
-            f"La más recomendada es **{mejor['descripcion']}** "
-            f"(lote {mejor['lote']}, {mejor['longitud_no_comprometida']:.2f} m libres)."
-        )
+        mensaje = t_count("msg.stock", n_stock, lang,
+                          ref=mejor["descripcion"], lote=mejor["lote"],
+                          libre=f"{mejor['longitud_no_comprometida']:.2f}")
     elif tipo == "fabricacion":
         mejor = resultado["fabricacion"]["piezas"][0]
         fecha = mejor.get("fecha_retraso") or mejor.get("fecha_disponibilidad")
-        fecha_txt = f"disponible ~{_fmt_fecha_es(fecha)}" if fecha else "fecha fin fabricación no especificada"
-        mensaje = (
-            f"No hay stock terminado, pero hay **{n_fab} {'pieza' if n_fab == 1 else 'piezas'} en fabricación**. "
-            f"La más cercana es {mejor['lote']} ({mejor['longitud_no_comprometida']:.2f} m libres, "
-            f"{fecha_txt})."
-        )
+        fecha_txt = (t("msg.fecha_disponible", lang, fecha=_fmt_fecha_es(fecha))
+                     if fecha else t("msg.fecha_no_especificada", lang))
+        mensaje = t_count("msg.fabricacion", n_fab, lang,
+                          lote=mejor["lote"],
+                          libre=f"{mejor['longitud_no_comprometida']:.2f}",
+                          fecha_txt=fecha_txt)
         if hay_alts:
-            mensaje += " ¿Quieres que mire también **alternativas que sí tengamos en stock**?"
+            mensaje += t("msg.fabricacion_alts_offer", lang)
     elif tipo == "todas_comprometidas":
-        mensaje = (
-            "No hay stock terminado y **toda la fabricación en curso de esa referencia "
-            "ya está reservada**."
-        )
+        mensaje = t("msg.todas_comprometidas_base", lang)
         if hay_alts:
-            mensaje += " ¿Quieres que mire alternativas similares?"
+            mensaje += t("msg.todas_comprometidas_alts_offer", lang)
     else:
-        mensaje = f"No hay stock terminado de **{ref}** ni fabricación dada de alta."
+        mensaje = t("msg.sin_stock_base", lang, ref=ref)
         if hay_alts:
-            mensaje += " ¿Quieres que mire referencias similares?"
+            mensaje += t("msg.sin_stock_alts_offer", lang)
 
     return {
         "tipo": tipo,
@@ -412,7 +494,8 @@ def _descripciones_de_coleccion(col: str) -> list[str]:
     ]
 
 
-def _necesita_color_response(coleccion: str, colores: list, ancho, largo) -> dict:
+def _necesita_color_response(coleccion: str, colores: list, ancho, largo,
+                             lang: str = DEFAULT_LANG) -> dict:
     """Respuesta cuando el usuario menciona una coleccion sin color: chips clicables."""
     col_norm = bs.normalizar(coleccion)
     chips = []
@@ -420,10 +503,7 @@ def _necesita_color_response(coleccion: str, colores: list, ancho, largo) -> dic
         cn = bs.normalizar(c)
         label = c[len(coleccion):].strip() if cn.startswith(col_norm) else c
         chips.append({"ref": c, "label": label or c})
-    mensaje = (
-        f"Has preguntado por **{coleccion}** pero no me has dicho qué color. "
-        f"Tenemos {len(colores)} colores disponibles — dime cuál (o pulsa abajo)."
-    )
+    mensaje = t("msg.necesita_color", lang, coleccion=coleccion, n=len(colores))
     return {
         "tipo": "necesita_color",
         "mensaje": mensaje,
@@ -435,7 +515,7 @@ def _necesita_color_response(coleccion: str, colores: list, ancho, largo) -> dic
     }
 
 
-def _try_ai_dispatch(query: str, last_ref: str | None):
+def _try_ai_dispatch(query: str, last_ref: str | None, lang: str = DEFAULT_LANG):
     """Intenta resolver la query via OpenAI gpt-4o-mini. Devuelve un dict
     de respuesta listo para serializar, o None si la IA no llego a una
     conclusion util (en cuyo caso el caller usa el regex de respaldo).
@@ -444,6 +524,7 @@ def _try_ai_dispatch(query: str, last_ref: str | None):
         query, last_ref,
         catalogo=DESCRIPCIONES_ACTIVAS,
         colecciones=list(COLECCIONES.keys()),
+        lang=lang,
     )
     if not ai:
         return None
@@ -469,7 +550,7 @@ def _try_ai_dispatch(query: str, last_ref: str | None):
     if intent == "lista_colores":
         target = coleccion or _coleccion_de_descripcion(ref) or _coleccion_de_descripcion(last_ref)
         if target:
-            return _lista_colores_response(target)
+            return _lista_colores_response(target, lang)
         return None
 
     if intent == "alternativas":
@@ -479,39 +560,36 @@ def _try_ai_dispatch(query: str, last_ref: str | None):
 
     if intent == "consulta_stock":
         if ref:
-            out = _ejecutar_consulta(ref, ancho, largo)
+            out = _ejecutar_consulta(ref, ancho, largo, lang)
             if out:
                 out["parsed"] = {"ref": ref, "ancho": ancho, "largo": largo, "via": "ai"}
                 return out
         if coleccion:
             colores = _descripciones_de_coleccion(coleccion)
             if len(colores) == 1:
-                out = _ejecutar_consulta(colores[0], ancho, largo)
+                out = _ejecutar_consulta(colores[0], ancho, largo, lang)
                 if out:
                     out["parsed"] = {"ref": colores[0], "ancho": ancho, "largo": largo, "via": "ai"}
                     return out
             elif len(colores) > 1:
-                return _necesita_color_response(coleccion, colores, ancho, largo)
+                return _necesita_color_response(coleccion, colores, ancho, largo, lang)
 
     return None
 
 
-def _lista_colores_response(col: str) -> dict:
+def _lista_colores_response(col: str, lang: str = DEFAULT_LANG) -> dict:
     """Construye la respuesta para el frontend cuando piden listar colores."""
     descs = _descripciones_de_coleccion(col)
     chips = []
     for d in descs:
-        # Quitar el prefijo de la coleccion para que el chip muestre solo el color.
         prefijo = col + " "
         label = d[len(prefijo):].strip() if d.upper().startswith(prefijo.upper()) else d
         chips.append({"ref": d, "label": label or d})
+    col_titulo = _coleccion_titulo(col)
     if descs:
-        mensaje = (
-            f"En **{col.title()}** tenemos **{len(descs)} "
-            f"{'color' if len(descs) == 1 else 'colores'}**. Pulsa cualquiera para ver su stock."
-        )
+        mensaje = t_count("msg.lista_colores", len(descs), lang, coleccion=col_titulo)
     else:
-        mensaje = f"No tengo colores activos registrados en **{col.title()}**."
+        mensaje = t("msg.lista_colores.empty", lang, coleccion=col_titulo)
     return {
         "tipo": "lista_colores",
         "mensaje": mensaje,
@@ -570,19 +648,20 @@ def api_refs_grouped():
 @app.route("/api/consulta", methods=["POST"])
 def api_consulta():
     data = request.get_json(force=True)
+    lang = _get_lang()
     ref = (data.get("ref") or "").strip()
     ancho = data.get("ancho")
     largo = data.get("largo")
     unidad = (data.get("unidad") or "m").lower()  # 'm' o 'cm'
 
     if not ref:
-        return jsonify({"error": "Falta la referencia"}), 400
+        return jsonify({"error": t("msg.errors.missing_ref", lang)}), 400
 
     try:
         ancho = float(ancho) if ancho not in (None, "") else None
         largo = float(largo) if largo not in (None, "") else None
     except (TypeError, ValueError):
-        return jsonify({"error": "Ancho y largo deben ser numeros"}), 400
+        return jsonify({"error": t("msg.errors.invalid_measures", lang)}), 400
 
     if unidad == "cm":
         if ancho is not None:
@@ -590,19 +669,20 @@ def api_consulta():
         if largo is not None:
             largo = largo / 100
 
-    return jsonify(_ejecutar_consulta(ref, ancho, largo))
+    return jsonify(_ejecutar_consulta(ref, ancho, largo, lang))
 
 
 @app.route("/api/consulta-nl", methods=["POST"])
 def api_consulta_nl():
     data = request.get_json(force=True)
+    lang = _get_lang()
     query = (data.get("query") or "").strip()
     last_ref = (data.get("last_ref") or "").strip() or None
     if not query:
-        return jsonify({"error": "Falta la consulta"}), 400
+        return jsonify({"error": t("msg.errors.missing_query", lang)}), 400
 
     # 1) Intentar primero con IA (gpt-4o-mini).
-    ai_response = _try_ai_dispatch(query, last_ref)
+    ai_response = _try_ai_dispatch(query, last_ref, lang)
     if ai_response is not None:
         return jsonify(ai_response)
 
@@ -613,7 +693,7 @@ def api_consulta_nl():
         if not col and last_ref:
             col = _coleccion_de_descripcion(last_ref)
         if col:
-            return jsonify(_lista_colores_response(col))
+            return jsonify(_lista_colores_response(col, lang))
 
     # 3) Fallback: parser de regex.
     parsed = parse_natural_query(query, last_ref=last_ref)
@@ -621,12 +701,12 @@ def api_consulta_nl():
     if parsed.get("coleccion_ambigua"):
         return jsonify(_necesita_color_response(
             parsed["coleccion_ambigua"], parsed["colores_disponibles"],
-            parsed.get("ancho"), parsed.get("largo"),
+            parsed.get("ancho"), parsed.get("largo"), lang,
         ))
 
-    out = _ejecutar_consulta(parsed["ref"], parsed["ancho"], parsed["largo"])
+    out = _ejecutar_consulta(parsed["ref"], parsed["ancho"], parsed["largo"], lang)
     if out is None:
-        return jsonify({"error": "No pude entender la consulta"}), 400
+        return jsonify({"error": t("msg.errors.could_not_understand", lang)}), 400
     out["parsed"] = parsed
     return jsonify(out)
 

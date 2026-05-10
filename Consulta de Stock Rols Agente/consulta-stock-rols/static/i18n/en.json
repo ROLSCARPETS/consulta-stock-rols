@@ -1,0 +1,152 @@
+{
+  "lang": {
+    "name": "English",
+    "code": "EN"
+  },
+  "ui": {
+    "sidebar": {
+      "home": "Home",
+      "orders": "Orders placed",
+      "drafts": "Draft quotes",
+      "samples": "Samples",
+      "stock": "Stock check",
+      "tariff": "Your pricing",
+      "calculate_quote": "Calculate your quote",
+      "request_samples": "Request new samples",
+      "settings": "Settings",
+      "logout": "Sign out",
+      "language": "Language"
+    },
+    "header": {
+      "breadcrumb_home": "Home",
+      "breadcrumb_stock": "Stock check",
+      "stock_synced": "Stock synced"
+    },
+    "page": {
+      "title_part1": "Stock",
+      "title_part2": "check",
+      "subtitle_html": "You have <strong>two ways</strong> to check availability: fill out the form with model, shape and dimensions, or ask the assistant directly in natural language."
+    },
+    "search_form": {
+      "step_label": "Guided search",
+      "step_subtitle": "Filter by carpet, shape and dimensions",
+      "alfombra_label": "Choose your carpet",
+      "search_placeholder": "Search...",
+      "forma_label": "Choose the shape",
+      "rectangular": "Rectangular",
+      "circular": "Circular",
+      "medidas_label": "Total useful dimensions",
+      "ancho_placeholder": "Enter the width in cm",
+      "largo_placeholder": "Enter the length in cm",
+      "diametro_placeholder": "Enter the diameter in cm",
+      "ancho_hint": "Width · max — cm",
+      "largo_hint": "Length · max — cm",
+      "diametro_hint": "Diameter · max — cm",
+      "submit": "Check stock →"
+    },
+    "chat": {
+      "step_label": "Ask the assistant directly",
+      "step_subtitle": "Type your question in natural language and you'll get the answer in the panel on the right.",
+      "placeholder": "E.g. Do you have more than 30 ML of LUNA PLATINIUM?",
+      "submit": "Send →",
+      "user_avatar": "YOU",
+      "ai_avatar": "AI",
+      "ai_initial": "You'll see the assistant's response here once you launch a query. You can use the form or type in natural language."
+    },
+    "search_context": {
+      "label": "Active search"
+    },
+    "results": {
+      "title": "Pieces available for your query",
+      "empty_initial": "Launch a query to see available pieces.",
+      "empty_no_match": "No pieces meet the criteria.",
+      "showing_one": "Showing 1 piece",
+      "showing_other": "Showing {count} pieces",
+      "view_all": "View all →",
+      "col_descripcion": "Description",
+      "col_lote": "Batch No.",
+      "col_ancho": "Width",
+      "col_libre": "Uncommitted length (LM)",
+      "col_estado": "Piece status",
+      "col_fab_date": "Production end date",
+      "fab_date_unspecified": "Not specified",
+      "obs_revision": "Inspection:",
+      "obs_venta": "Sales:",
+      "obs_tooltip": "Click to see notes"
+    },
+    "alternatives": {
+      "title": "Alternatives if the customer accepts",
+      "tier1_header": "Tier I · same family, different design",
+      "tier2_header": "Tier II · different construction / similar tone",
+      "in_stock_one": "1 in stock",
+      "in_stock_other": "{count} in stock",
+      "no_stock_for_size": "no stock for this size",
+      "col_lote": "Batch",
+      "col_ancho": "Width",
+      "col_libre": "Uncommitted length",
+      "col_estado": "Status"
+    },
+    "estados": {
+      "Correcto": "CORRECT",
+      "Saldo": "CLEARANCE",
+      "Aprestado": "PRIMED",
+      "Ver Anotaciones": "SEE NOTES",
+      "Agotado": "OUT OF STOCK",
+      "Lanzada": "IN PRODUCTION",
+      "Planif. en firme": "PLANNED FIRM"
+    },
+    "dropdown": {
+      "result_count_zero": "No results",
+      "result_count_one": "1 reference",
+      "result_count_other": "{count} references",
+      "empty": "No matches for that search."
+    }
+  },
+  "msg": {
+    "stock": {
+      "one": "We have **1 piece** that meets your query. The recommended one is **{ref}** (batch {lote}, {libre} m available).",
+      "other": "We have **{count} pieces** that meet your query. The recommended one is **{ref}** (batch {lote}, {libre} m available)."
+    },
+    "fabricacion": {
+      "one": "No finished stock, but there is **1 piece in production**. The closest is {lote} ({libre} m available, {fecha_txt}).",
+      "other": "No finished stock, but there are **{count} pieces in production**. The closest is {lote} ({libre} m available, {fecha_txt})."
+    },
+    "fabricacion_alts_offer": " Want me to also check **alternatives that we do have in stock**?",
+    "fecha_disponible": "available ~{fecha}",
+    "fecha_no_especificada": "production end date not specified",
+    "todas_comprometidas_base": "No finished stock and **all production in progress for this reference is already reserved**.",
+    "todas_comprometidas_alts_offer": " Want me to look for similar alternatives?",
+    "sin_stock_base": "No finished stock of **{ref}** and no production scheduled.",
+    "sin_stock_alts_offer": " Want me to look for similar references?",
+    "medida_invalida": {
+      "header": "⚠️ The requested size is not possible in **{coleccion}**: {detalle}. Rolls come in **{anchos}** widths. Want me to look at another size that does fit?",
+      "ancho_excede": "the width **{ancho} m** exceeds the maximum roll of **{max_ancho} m**",
+      "largo_excede": "the length **{largo} m** exceeds the maximum piece of **{max_largo} m**",
+      "default_detalle": "doesn't fit in any roll combination",
+      "chip_axb": "{ancho} × {largo} m",
+      "chip_solo_ancho": "{ancho} m wide",
+      "chip_solo_largo": "{largo} m long"
+    },
+    "necesita_color": "You asked about **{coleccion}** but didn't tell me which colour. We have {n} colours available — tell me which (or click below).",
+    "lista_colores": {
+      "one": "In **{coleccion}** we have **1 colour**. Click any to see its stock.",
+      "other": "In **{coleccion}** we have **{count} colours**. Click any to see its stock.",
+      "empty": "I don't have any active colours registered in **{coleccion}**."
+    },
+    "alts_followup": {
+      "no_alternatives": "No alternatives registered for **{ref}**.",
+      "exists_no_stock_one": "There is 1 alternative for **{ref}** but **none has stock** for your size.",
+      "exists_no_stock_other": "There are {total} alternatives for **{ref}** but **none has stock** for your size.",
+      "with_stock_one_one": "Here is the alternative for **{ref}**: **1 with stock** for your size.",
+      "with_stock_other_one": "Here are {total} alternatives for **{ref}**: **1 with stock** for your size.",
+      "with_stock_other_other": "Here are {total} alternatives for **{ref}**: **{con_stock} with stock** for your size."
+    },
+    "errors": {
+      "missing_query": "Query missing",
+      "missing_ref": "Reference missing",
+      "invalid_measures": "Width and length must be numbers",
+      "could_not_understand": "I couldn't understand the query"
+    },
+    "list_sep_and": " and "
+  }
+}

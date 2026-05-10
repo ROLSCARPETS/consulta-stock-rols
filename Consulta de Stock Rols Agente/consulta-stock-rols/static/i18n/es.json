@@ -1,0 +1,152 @@
+{
+  "lang": {
+    "name": "Español",
+    "code": "ES"
+  },
+  "ui": {
+    "sidebar": {
+      "home": "Inicio",
+      "orders": "Pedidos realizados",
+      "drafts": "Presupuestos en borrador",
+      "samples": "Muestras",
+      "stock": "Consulta de stock",
+      "tariff": "Tu tarifa",
+      "calculate_quote": "Calcula tu presupuesto",
+      "request_samples": "Solicita nuevas muestras",
+      "settings": "Configuración",
+      "logout": "Cerrar sesión",
+      "language": "Idioma"
+    },
+    "header": {
+      "breadcrumb_home": "Inicio",
+      "breadcrumb_stock": "Consulta de stock",
+      "stock_synced": "Stock sincronizado"
+    },
+    "page": {
+      "title_part1": "Consulta de",
+      "title_part2": "stock",
+      "subtitle_html": "Tienes <strong>dos formas</strong> de consultar disponibilidad: rellena el formulario con modelo, forma y medidas, o pregúntale directamente al asistente en lenguaje natural."
+    },
+    "search_form": {
+      "step_label": "Búsqueda guiada",
+      "step_subtitle": "Filtra por alfombra, forma y medidas",
+      "alfombra_label": "Elige tu alfombra",
+      "search_placeholder": "Buscar...",
+      "forma_label": "Elige la forma",
+      "rectangular": "Rectangular",
+      "circular": "Circular",
+      "medidas_label": "Medidas totales útiles",
+      "ancho_placeholder": "Introduce el ancho en cm",
+      "largo_placeholder": "Introduce el largo en cm",
+      "diametro_placeholder": "Introduce el diámetro en cm",
+      "ancho_hint": "Ancho · max — cm",
+      "largo_hint": "Largo · max — cm",
+      "diametro_hint": "Diámetro · max — cm",
+      "submit": "Consultar stock →"
+    },
+    "chat": {
+      "step_label": "Pregunta al asistente directamente",
+      "step_subtitle": "Escribe tu consulta en lenguaje natural y te responderá en el panel de la derecha.",
+      "placeholder": "Ej. ¿Tienes más de 30 ML en LUNA PLATINIUM?",
+      "submit": "Enviar →",
+      "user_avatar": "TÚ",
+      "ai_avatar": "IA",
+      "ai_initial": "Aquí verás la respuesta del asistente cuando lances una consulta. Puedes usar el formulario o escribir en lenguaje natural."
+    },
+    "search_context": {
+      "label": "Búsqueda activa"
+    },
+    "results": {
+      "title": "Piezas disponibles para completar la consulta",
+      "empty_initial": "Lanza una consulta para ver las piezas disponibles.",
+      "empty_no_match": "No hay piezas que cumplan los criterios.",
+      "showing_one": "Mostrando 1 pieza",
+      "showing_other": "Mostrando {count} piezas",
+      "view_all": "Ver todas →",
+      "col_descripcion": "Descripción",
+      "col_lote": "Nº Lote",
+      "col_ancho": "Ancho",
+      "col_libre": "Long. no comprometida (ML)",
+      "col_estado": "Estado pieza",
+      "col_fab_date": "Fecha fin fabricación",
+      "fab_date_unspecified": "No especificada",
+      "obs_revision": "Revisión:",
+      "obs_venta": "Venta:",
+      "obs_tooltip": "Click para ver anotaciones"
+    },
+    "alternatives": {
+      "title": "Alternativas si el cliente acepta",
+      "tier1_header": "Tier I · misma familia, otro diseño",
+      "tier2_header": "Tier II · otra construcción / colorido similar",
+      "in_stock_one": "1 en stock",
+      "in_stock_other": "{count} en stock",
+      "no_stock_for_size": "sin stock para esta medida",
+      "col_lote": "Lote",
+      "col_ancho": "Ancho",
+      "col_libre": "Long. no comprometida",
+      "col_estado": "Estado"
+    },
+    "estados": {
+      "Correcto": "CORRECTO",
+      "Saldo": "SALDO",
+      "Aprestado": "APRESTADO",
+      "Ver Anotaciones": "VER ANOTACIONES",
+      "Agotado": "AGOTADO",
+      "Lanzada": "EN FABRICACIÓN",
+      "Planif. en firme": "PLANIF. EN FIRME"
+    },
+    "dropdown": {
+      "result_count_zero": "Sin resultados",
+      "result_count_one": "1 referencia",
+      "result_count_other": "{count} referencias",
+      "empty": "No encontramos nada con esa búsqueda."
+    }
+  },
+  "msg": {
+    "stock": {
+      "one": "Tenemos **1 pieza** que cumple tu consulta. La más recomendada es **{ref}** (lote {lote}, {libre} m libres).",
+      "other": "Tenemos **{count} piezas** que cumplen tu consulta. La más recomendada es **{ref}** (lote {lote}, {libre} m libres)."
+    },
+    "fabricacion": {
+      "one": "No hay stock terminado, pero hay **1 pieza en fabricación**. La más cercana es {lote} ({libre} m libres, {fecha_txt}).",
+      "other": "No hay stock terminado, pero hay **{count} piezas en fabricación**. La más cercana es {lote} ({libre} m libres, {fecha_txt})."
+    },
+    "fabricacion_alts_offer": " ¿Quieres que mire también **alternativas que sí tengamos en stock**?",
+    "fecha_disponible": "disponible ~{fecha}",
+    "fecha_no_especificada": "fecha fin fabricación no especificada",
+    "todas_comprometidas_base": "No hay stock terminado y **toda la fabricación en curso de esa referencia ya está reservada**.",
+    "todas_comprometidas_alts_offer": " ¿Quieres que mire alternativas similares?",
+    "sin_stock_base": "No hay stock terminado de **{ref}** ni fabricación dada de alta.",
+    "sin_stock_alts_offer": " ¿Quieres que mire referencias similares?",
+    "medida_invalida": {
+      "header": "⚠️ La medida pedida no es posible en **{coleccion}**: {detalle}. Los rollos vienen en **{anchos}** de ancho. ¿Quieres que mire en otra medida que sí encaje?",
+      "ancho_excede": "el ancho **{ancho} m** supera el rollo máximo de **{max_ancho} m**",
+      "largo_excede": "el largo **{largo} m** supera la pieza máxima de **{max_largo} m**",
+      "default_detalle": "no encaja en ninguna combinación de rollo",
+      "chip_axb": "{ancho} × {largo} m",
+      "chip_solo_ancho": "{ancho} m de ancho",
+      "chip_solo_largo": "{largo} m de largo"
+    },
+    "necesita_color": "Has preguntado por **{coleccion}** pero no me has dicho qué color. Tenemos {n} colores disponibles — dime cuál (o pulsa abajo).",
+    "lista_colores": {
+      "one": "En **{coleccion}** tenemos **1 color**. Pulsa cualquiera para ver su stock.",
+      "other": "En **{coleccion}** tenemos **{count} colores**. Pulsa cualquiera para ver su stock.",
+      "empty": "No tengo colores activos registrados en **{coleccion}**."
+    },
+    "alts_followup": {
+      "no_alternatives": "No tenemos alternativas registradas para **{ref}**.",
+      "exists_no_stock_one": "Hay 1 alternativa para **{ref}** pero **ninguna tiene stock** para tu medida.",
+      "exists_no_stock_other": "Hay {total} alternativas para **{ref}** pero **ninguna tiene stock** para tu medida.",
+      "with_stock_one_one": "Aquí tienes la alternativa para **{ref}**: **1 con stock** para tu medida.",
+      "with_stock_other_one": "Aquí tienes {total} alternativas para **{ref}**: **1 con stock** para tu medida.",
+      "with_stock_other_other": "Aquí tienes {total} alternativas para **{ref}**: **{con_stock} con stock** para tu medida."
+    },
+    "errors": {
+      "missing_query": "Falta la consulta",
+      "missing_ref": "Falta la referencia",
+      "invalid_measures": "Ancho y largo deben ser números",
+      "could_not_understand": "No pude entender la consulta"
+    },
+    "list_sep_and": " y "
+  }
+}
