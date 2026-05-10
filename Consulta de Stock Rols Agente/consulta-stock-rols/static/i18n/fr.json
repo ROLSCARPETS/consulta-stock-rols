@@ -1,0 +1,152 @@
+{
+  "lang": {
+    "name": "Français",
+    "code": "FR"
+  },
+  "ui": {
+    "sidebar": {
+      "home": "Accueil",
+      "orders": "Commandes passées",
+      "drafts": "Devis brouillons",
+      "samples": "Échantillons",
+      "stock": "Consultation de stock",
+      "tariff": "Votre tarif",
+      "calculate_quote": "Calculez votre devis",
+      "request_samples": "Demander des échantillons",
+      "settings": "Paramètres",
+      "logout": "Déconnexion",
+      "language": "Langue"
+    },
+    "header": {
+      "breadcrumb_home": "Accueil",
+      "breadcrumb_stock": "Consultation de stock",
+      "stock_synced": "Stock synchronisé"
+    },
+    "page": {
+      "title_part1": "Consultation",
+      "title_part2": "de stock",
+      "subtitle_html": "Vous avez <strong>deux façons</strong> de consulter la disponibilité : remplissez le formulaire avec modèle, forme et dimensions, ou demandez directement à l'assistant en langage naturel."
+    },
+    "search_form": {
+      "step_label": "Recherche guidée",
+      "step_subtitle": "Filtrez par tapis, forme et dimensions",
+      "alfombra_label": "Choisissez votre tapis",
+      "search_placeholder": "Rechercher...",
+      "forma_label": "Choisissez la forme",
+      "rectangular": "Rectangulaire",
+      "circular": "Circulaire",
+      "medidas_label": "Dimensions totales utiles",
+      "ancho_placeholder": "Saisissez la largeur en cm",
+      "largo_placeholder": "Saisissez la longueur en cm",
+      "diametro_placeholder": "Saisissez le diamètre en cm",
+      "ancho_hint": "Largeur · max — cm",
+      "largo_hint": "Longueur · max — cm",
+      "diametro_hint": "Diamètre · max — cm",
+      "submit": "Consulter le stock →"
+    },
+    "chat": {
+      "step_label": "Demandez à l'assistant",
+      "step_subtitle": "Saisissez votre demande en langage naturel et la réponse apparaîtra à droite.",
+      "placeholder": "Ex. Avez-vous plus de 30 ML en LUNA PLATINIUM ?",
+      "submit": "Envoyer →",
+      "user_avatar": "VOUS",
+      "ai_avatar": "IA",
+      "ai_initial": "Vous verrez la réponse de l'assistant ici dès que vous lancerez une requête. Utilisez le formulaire ou écrivez en langage naturel."
+    },
+    "search_context": {
+      "label": "Recherche active"
+    },
+    "results": {
+      "title": "Pièces disponibles pour votre recherche",
+      "empty_initial": "Lancez une requête pour voir les pièces disponibles.",
+      "empty_no_match": "Aucune pièce ne correspond aux critères.",
+      "showing_one": "1 pièce affichée",
+      "showing_other": "{count} pièces affichées",
+      "view_all": "Tout voir →",
+      "col_descripcion": "Description",
+      "col_lote": "N° de lot",
+      "col_ancho": "Largeur",
+      "col_libre": "Longueur libre (ML)",
+      "col_estado": "État de la pièce",
+      "col_fab_date": "Date fin de production",
+      "fab_date_unspecified": "Non précisée",
+      "obs_revision": "Inspection :",
+      "obs_venta": "Vente :",
+      "obs_tooltip": "Cliquez pour voir les notes"
+    },
+    "alternatives": {
+      "title": "Alternatives si le client accepte",
+      "tier1_header": "Tier I · même famille, autre design",
+      "tier2_header": "Tier II · autre construction / coloris similaire",
+      "in_stock_one": "1 en stock",
+      "in_stock_other": "{count} en stock",
+      "no_stock_for_size": "pas de stock pour cette dimension",
+      "col_lote": "Lot",
+      "col_ancho": "Largeur",
+      "col_libre": "Longueur libre",
+      "col_estado": "État"
+    },
+    "estados": {
+      "Correcto": "CORRECT",
+      "Saldo": "DESTOCKAGE",
+      "Aprestado": "APPRÊTÉ",
+      "Ver Anotaciones": "VOIR NOTES",
+      "Agotado": "ÉPUISÉ",
+      "Lanzada": "EN PRODUCTION",
+      "Planif. en firme": "PLANIFIÉ FERME"
+    },
+    "dropdown": {
+      "result_count_zero": "Aucun résultat",
+      "result_count_one": "1 référence",
+      "result_count_other": "{count} références",
+      "empty": "Aucune correspondance pour cette recherche."
+    }
+  },
+  "msg": {
+    "stock": {
+      "one": "Nous avons **1 pièce** qui correspond à votre recherche. La plus recommandée est **{ref}** (lot {lote}, {libre} m disponibles).",
+      "other": "Nous avons **{count} pièces** qui correspondent à votre recherche. La plus recommandée est **{ref}** (lot {lote}, {libre} m disponibles)."
+    },
+    "fabricacion": {
+      "one": "Pas de stock fini, mais il y a **1 pièce en production**. La plus proche est {lote} ({libre} m disponibles, {fecha_txt}).",
+      "other": "Pas de stock fini, mais il y a **{count} pièces en production**. La plus proche est {lote} ({libre} m disponibles, {fecha_txt})."
+    },
+    "fabricacion_alts_offer": " Voulez-vous que je cherche aussi **des alternatives que nous avons en stock** ?",
+    "fecha_disponible": "disponible ~{fecha}",
+    "fecha_no_especificada": "date de fin de production non précisée",
+    "todas_comprometidas_base": "Pas de stock fini et **toute la production en cours pour cette référence est déjà réservée**.",
+    "todas_comprometidas_alts_offer": " Voulez-vous que je cherche des alternatives similaires ?",
+    "sin_stock_base": "Pas de stock fini de **{ref}** ni de production prévue.",
+    "sin_stock_alts_offer": " Voulez-vous que je cherche des références similaires ?",
+    "medida_invalida": {
+      "header": "⚠️ La dimension demandée n'est pas possible en **{coleccion}** : {detalle}. Les rouleaux font **{anchos}** de largeur. Voulez-vous que je regarde une autre dimension qui convient ?",
+      "ancho_excede": "la largeur **{ancho} m** dépasse le rouleau maximum de **{max_ancho} m**",
+      "largo_excede": "la longueur **{largo} m** dépasse la pièce maximum de **{max_largo} m**",
+      "default_detalle": "ne rentre dans aucune combinaison de rouleau",
+      "chip_axb": "{ancho} × {largo} m",
+      "chip_solo_ancho": "{ancho} m de largeur",
+      "chip_solo_largo": "{largo} m de longueur"
+    },
+    "necesita_color": "Vous avez demandé **{coleccion}** mais sans préciser la couleur. Nous avons {n} couleurs disponibles — dites-moi laquelle (ou cliquez ci-dessous).",
+    "lista_colores": {
+      "one": "En **{coleccion}** nous avons **1 couleur**. Cliquez dessus pour voir le stock.",
+      "other": "En **{coleccion}** nous avons **{count} couleurs**. Cliquez sur l'une pour voir son stock.",
+      "empty": "Je n'ai aucune couleur active enregistrée en **{coleccion}**."
+    },
+    "alts_followup": {
+      "no_alternatives": "Aucune alternative enregistrée pour **{ref}**.",
+      "exists_no_stock_one": "Il y a 1 alternative pour **{ref}** mais **aucune n'a de stock** pour votre dimension.",
+      "exists_no_stock_other": "Il y a {total} alternatives pour **{ref}** mais **aucune n'a de stock** pour votre dimension.",
+      "with_stock_one_one": "Voici l'alternative pour **{ref}** : **1 avec du stock** pour votre dimension.",
+      "with_stock_other_one": "Voici {total} alternatives pour **{ref}** : **1 avec du stock** pour votre dimension.",
+      "with_stock_other_other": "Voici {total} alternatives pour **{ref}** : **{con_stock} avec du stock** pour votre dimension."
+    },
+    "errors": {
+      "missing_query": "Requête manquante",
+      "missing_ref": "Référence manquante",
+      "invalid_measures": "Largeur et longueur doivent être des nombres",
+      "could_not_understand": "Je n'ai pas compris la requête"
+    },
+    "list_sep_and": " et "
+  }
+}

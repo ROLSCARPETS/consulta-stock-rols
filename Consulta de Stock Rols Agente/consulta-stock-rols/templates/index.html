@@ -238,14 +238,15 @@
     color: rgba(214,212,200,0.55); font-weight: 600;
     margin-bottom: 0.4rem; display: block;
   }
-  .lang-buttons { display: flex; gap: 0.3rem; }
+  .lang-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
   .lang-btn {
-    flex: 1; padding: 0.4rem 0.5rem;
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+    padding: 0.38rem 0.3rem;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
     border: 1px solid rgba(214,212,200,0.18);
     background: transparent; color: var(--text-sidebar);
-    border-radius: 0.5rem; cursor: pointer;
+    border-radius: 0.45rem; cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
+    text-align: center;
   }
   .lang-btn:hover { background: var(--bg-sidebar-hover); color: var(--text-sidebar-active); }
   .lang-btn.active {
@@ -280,8 +281,12 @@
     <div class="lang-block">
       <span class="lang-label" data-i18n="ui.sidebar.language">Idioma</span>
       <div class="lang-buttons">
-        <button class="lang-btn" data-lang="es">ES</button>
-        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="es" title="Español">ES</button>
+        <button class="lang-btn" data-lang="en" title="English">EN</button>
+        <button class="lang-btn" data-lang="fr" title="Français">FR</button>
+        <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
+        <button class="lang-btn" data-lang="it" title="Italiano">IT</button>
+        <button class="lang-btn" data-lang="nl" title="Nederlands">NL</button>
       </div>
     </div>
 
@@ -493,7 +498,7 @@
 // ============================================================
 // i18n
 // ============================================================
-const SUPPORTED_LANGS = ['es', 'en'];
+const SUPPORTED_LANGS = ['es', 'en', 'fr', 'de', 'it', 'nl'];
 let CURRENT_LANG = (() => {
   const saved = localStorage.getItem('app-lang');
   return (saved && SUPPORTED_LANGS.includes(saved)) ? saved : 'es';

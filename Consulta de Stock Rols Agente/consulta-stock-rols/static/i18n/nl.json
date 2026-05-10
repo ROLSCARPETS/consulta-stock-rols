@@ -1,0 +1,152 @@
+{
+  "lang": {
+    "name": "Nederlands",
+    "code": "NL"
+  },
+  "ui": {
+    "sidebar": {
+      "home": "Home",
+      "orders": "Geplaatste bestellingen",
+      "drafts": "Concept-offertes",
+      "samples": "Stalen",
+      "stock": "Voorraad raadplegen",
+      "tariff": "Uw tarief",
+      "calculate_quote": "Bereken uw offerte",
+      "request_samples": "Nieuwe stalen aanvragen",
+      "settings": "Instellingen",
+      "logout": "Afmelden",
+      "language": "Taal"
+    },
+    "header": {
+      "breadcrumb_home": "Home",
+      "breadcrumb_stock": "Voorraad raadplegen",
+      "stock_synced": "Voorraad gesynchroniseerd"
+    },
+    "page": {
+      "title_part1": "Voorraad",
+      "title_part2": "raadplegen",
+      "subtitle_html": "U heeft <strong>twee manieren</strong> om de beschikbaarheid te controleren: vul het formulier in met model, vorm en afmetingen, of vraag direct aan de assistent in natuurlijke taal."
+    },
+    "search_form": {
+      "step_label": "Begeleide zoekopdracht",
+      "step_subtitle": "Filter op tapijt, vorm en afmetingen",
+      "alfombra_label": "Kies uw tapijt",
+      "search_placeholder": "Zoeken...",
+      "forma_label": "Kies de vorm",
+      "rectangular": "Rechthoekig",
+      "circular": "Rond",
+      "medidas_label": "Totale bruikbare afmetingen",
+      "ancho_placeholder": "Voer de breedte in cm in",
+      "largo_placeholder": "Voer de lengte in cm in",
+      "diametro_placeholder": "Voer de diameter in cm in",
+      "ancho_hint": "Breedte · max — cm",
+      "largo_hint": "Lengte · max — cm",
+      "diametro_hint": "Diameter · max — cm",
+      "submit": "Voorraad controleren →"
+    },
+    "chat": {
+      "step_label": "Vraag de assistent direct",
+      "step_subtitle": "Typ uw vraag in natuurlijke taal en het antwoord verschijnt rechts.",
+      "placeholder": "Bijv. Heeft u meer dan 30 ML van LUNA PLATINIUM?",
+      "submit": "Verzenden →",
+      "user_avatar": "U",
+      "ai_avatar": "AI",
+      "ai_initial": "Hier ziet u het antwoord van de assistent zodra u een vraag stelt. Gebruik het formulier of typ in natuurlijke taal."
+    },
+    "search_context": {
+      "label": "Actieve zoekopdracht"
+    },
+    "results": {
+      "title": "Beschikbare stukken voor uw zoekopdracht",
+      "empty_initial": "Stel een vraag om beschikbare stukken te zien.",
+      "empty_no_match": "Geen stukken voldoen aan de criteria.",
+      "showing_one": "1 stuk weergegeven",
+      "showing_other": "{count} stukken weergegeven",
+      "view_all": "Alles bekijken →",
+      "col_descripcion": "Omschrijving",
+      "col_lote": "Partijnr.",
+      "col_ancho": "Breedte",
+      "col_libre": "Beschikbare lengte (LM)",
+      "col_estado": "Status",
+      "col_fab_date": "Einddatum productie",
+      "fab_date_unspecified": "Niet opgegeven",
+      "obs_revision": "Inspectie:",
+      "obs_venta": "Verkoop:",
+      "obs_tooltip": "Klik voor opmerkingen"
+    },
+    "alternatives": {
+      "title": "Alternatieven als de klant akkoord gaat",
+      "tier1_header": "Tier I · zelfde familie, ander design",
+      "tier2_header": "Tier II · andere constructie / vergelijkbare kleur",
+      "in_stock_one": "1 op voorraad",
+      "in_stock_other": "{count} op voorraad",
+      "no_stock_for_size": "geen voorraad voor deze maat",
+      "col_lote": "Partij",
+      "col_ancho": "Breedte",
+      "col_libre": "Beschikbare lengte",
+      "col_estado": "Status"
+    },
+    "estados": {
+      "Correcto": "CORRECT",
+      "Saldo": "RESTPARTIJ",
+      "Aprestado": "GEAPPRETEERD",
+      "Ver Anotaciones": "ZIE NOTITIES",
+      "Agotado": "UITVERKOCHT",
+      "Lanzada": "IN PRODUCTIE",
+      "Planif. en firme": "VAST GEPLAND"
+    },
+    "dropdown": {
+      "result_count_zero": "Geen resultaten",
+      "result_count_one": "1 referentie",
+      "result_count_other": "{count} referenties",
+      "empty": "Geen resultaten voor deze zoekopdracht."
+    }
+  },
+  "msg": {
+    "stock": {
+      "one": "We hebben **1 stuk** dat aan uw vraag voldoet. Aanbevolen: **{ref}** (partij {lote}, {libre} m beschikbaar).",
+      "other": "We hebben **{count} stukken** die aan uw vraag voldoen. Aanbevolen: **{ref}** (partij {lote}, {libre} m beschikbaar)."
+    },
+    "fabricacion": {
+      "one": "Geen afgewerkte voorraad, maar er is **1 stuk in productie**. Het dichtstbijzijnde is {lote} ({libre} m beschikbaar, {fecha_txt}).",
+      "other": "Geen afgewerkte voorraad, maar er zijn **{count} stukken in productie**. Het dichtstbijzijnde is {lote} ({libre} m beschikbaar, {fecha_txt})."
+    },
+    "fabricacion_alts_offer": " Wilt u ook **alternatieven die wij wel op voorraad hebben** bekijken?",
+    "fecha_disponible": "beschikbaar ~{fecha}",
+    "fecha_no_especificada": "einddatum productie niet opgegeven",
+    "todas_comprometidas_base": "Geen afgewerkte voorraad en **alle lopende productie voor deze referentie is al gereserveerd**.",
+    "todas_comprometidas_alts_offer": " Wilt u dat ik vergelijkbare alternatieven zoek?",
+    "sin_stock_base": "Geen afgewerkte voorraad van **{ref}** en geen productie gepland.",
+    "sin_stock_alts_offer": " Wilt u dat ik vergelijkbare referenties zoek?",
+    "medida_invalida": {
+      "header": "⚠️ De gevraagde maat is niet mogelijk in **{coleccion}**: {detalle}. De rollen zijn **{anchos}** breed. Wilt u dat ik naar een andere passende maat kijk?",
+      "ancho_excede": "de breedte **{ancho} m** overschrijdt de maximale rol van **{max_ancho} m**",
+      "largo_excede": "de lengte **{largo} m** overschrijdt het maximale stuk van **{max_largo} m**",
+      "default_detalle": "past in geen enkele rolcombinatie",
+      "chip_axb": "{ancho} × {largo} m",
+      "chip_solo_ancho": "{ancho} m breed",
+      "chip_solo_largo": "{largo} m lang"
+    },
+    "necesita_color": "U vroeg naar **{coleccion}** maar zei niet welke kleur. We hebben {n} kleuren beschikbaar — vertel mij welke (of klik hieronder).",
+    "lista_colores": {
+      "one": "In **{coleccion}** hebben we **1 kleur**. Klik om de voorraad te zien.",
+      "other": "In **{coleccion}** hebben we **{count} kleuren**. Klik op één om de voorraad te zien.",
+      "empty": "Geen actieve kleuren geregistreerd in **{coleccion}**."
+    },
+    "alts_followup": {
+      "no_alternatives": "Geen alternatieven geregistreerd voor **{ref}**.",
+      "exists_no_stock_one": "Er is 1 alternatief voor **{ref}** maar **geen heeft voorraad** voor uw maat.",
+      "exists_no_stock_other": "Er zijn {total} alternatieven voor **{ref}** maar **geen heeft voorraad** voor uw maat.",
+      "with_stock_one_one": "Hier is het alternatief voor **{ref}**: **1 met voorraad** voor uw maat.",
+      "with_stock_other_one": "Hier zijn {total} alternatieven voor **{ref}**: **1 met voorraad** voor uw maat.",
+      "with_stock_other_other": "Hier zijn {total} alternatieven voor **{ref}**: **{con_stock} met voorraad** voor uw maat."
+    },
+    "errors": {
+      "missing_query": "Vraag ontbreekt",
+      "missing_ref": "Referentie ontbreekt",
+      "invalid_measures": "Breedte en lengte moeten getallen zijn",
+      "could_not_understand": "Ik begreep de vraag niet"
+    },
+    "list_sep_and": " en "
+  }
+}
