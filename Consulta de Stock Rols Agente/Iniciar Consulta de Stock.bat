@@ -44,6 +44,22 @@ if errorlevel 1 (
     echo.
 )
 
+REM Verificar/instalar openai (lo usa intent_parser.py para la capa de IA)
+python -c "import openai" >nul 2>nul
+if errorlevel 1 (
+    echo [Primera vez] Instalando openai...
+    python -m pip install openai --quiet
+    echo.
+)
+
+REM Verificar/instalar python-dotenv (carga .env con la OPENAI_API_KEY)
+python -c "import dotenv" >nul 2>nul
+if errorlevel 1 (
+    echo [Primera vez] Instalando python-dotenv...
+    python -m pip install python-dotenv --quiet
+    echo.
+)
+
 REM Abrir el navegador en 3s (en paralelo al arranque del servidor)
 start "" /min cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:5000"
 

@@ -21,6 +21,7 @@ sys.path.insert(0, str(APP_DIR / "scripts"))
 from flask import Flask, render_template, request, jsonify  # noqa: E402
 
 import buscar_stock as bs  # noqa: E402
+import intent_parser  # noqa: E402
 
 
 app = Flask(__name__)
@@ -381,6 +382,84 @@ def _descripciones_de_coleccion(col: str) -> list[str]:
     ]
 
 
+def _necesita_color_response(coleccion: str, colores: list, ancho, largo) -> dict:
+    """Respuesta cuando el usuario menciona una coleccion sin color: chips clicables."""
+    col_norm = bs.normalizar(coleccion)
+    chips = []
+    for c in colores:
+        cn = bs.normalizar(c)
+        label = c[len(coleccion):].strip() if cn.startswith(col_norm) else c
+        chips.append({"ref": c, "label": label or c})
+    mensaje = (
+        f"Has preguntado por **{coleccion}** pero no me has dicho qué color. "
+        f"Tenemos {len(colores)} colores disponibles — dime cuál (o pulsa abajo)."
+    )
+    return {
+        "tipo": "necesita_color",
+        "mensaje": mensaje,
+        "filas": [],
+        "alternativas": None,
+        "chips_color": chips,
+        "consulta_original": {"ancho": ancho, "largo": largo},
+        "parsed": {"coleccion_ambigua": coleccion, "colores_disponibles": colores},
+    }
+
+
+def _try_ai_dispatch(query: str, last_ref: str | None):
+    """Intenta resolver la query via OpenAI gpt-4o-mini. Devuelve un dict
+    de respuesta listo para serializar, o None si la IA no llego a una
+    conclusion util (en cuyo caso el caller usa el regex de respaldo).
+    """
+    ai = intent_parser.parse_with_ai(
+        query, last_ref,
+        catalogo=DESCRIPCIONES_ACTIVAS,
+        colecciones=list(COLECCIONES.keys()),
+    )
+    if not ai:
+        return None
+
+    intent = ai.get("intent")
+    ref = ai.get("ref")
+    coleccion = ai.get("coleccion")
+    ancho = ai.get("ancho_m")
+    largo = ai.get("largo_m")
+
+    # Validar contra el catalogo (la IA puede alucinar)
+    if ref and ref not in set(DESCRIPCIONES):
+        ref = None
+    if coleccion and coleccion not in COLECCIONES:
+        coleccion = None
+
+    if intent == "lista_colores":
+        target = coleccion or _coleccion_de_descripcion(ref) or _coleccion_de_descripcion(last_ref)
+        if target:
+            return _lista_colores_response(target)
+        return None
+
+    if intent == "alternativas":
+        # No tenemos un flujo dedicado distinto al "si tras oferta" del frontend.
+        # Caemos al regex para que ejecute la consulta normal.
+        return None
+
+    if intent == "consulta_stock":
+        if ref:
+            out = _ejecutar_consulta(ref, ancho, largo)
+            if out:
+                out["parsed"] = {"ref": ref, "ancho": ancho, "largo": largo, "via": "ai"}
+                return out
+        if coleccion:
+            colores = _descripciones_de_coleccion(coleccion)
+            if len(colores) == 1:
+                out = _ejecutar_consulta(colores[0], ancho, largo)
+                if out:
+                    out["parsed"] = {"ref": colores[0], "ancho": ancho, "largo": largo, "via": "ai"}
+                    return out
+            elif len(colores) > 1:
+                return _necesita_color_response(coleccion, colores, ancho, largo)
+
+    return None
+
+
 def _lista_colores_response(col: str) -> dict:
     """Construye la respuesta para el frontend cuando piden listar colores."""
     descs = _descripciones_de_coleccion(col)
@@ -461,8 +540,12 @@ def api_consulta_nl():
     if not query:
         return jsonify({"error": "Falta la consulta"}), 400
 
-    # Meta-pregunta: "que otros colores hay de teide nx?", "muestrame las
-    # referencias de palma rock"... Devuelve chips con todos los colores.
+    # 1) Intentar primero con IA (gpt-4o-mini).
+    ai_response = _try_ai_dispatch(query, last_ref)
+    if ai_response is not None:
+        return jsonify(ai_response)
+
+    # 2) Fallback: meta-pregunta por regex.
     nq = bs.normalizar(query)
     if META_LISTA_RE.search(nq):
         col = _detectar_coleccion_en_query(nq)
@@ -471,40 +554,14 @@ def api_consulta_nl():
         if col:
             return jsonify(_lista_colores_response(col))
 
+    # 3) Fallback: parser de regex.
     parsed = parse_natural_query(query, last_ref=last_ref)
 
-    # Caso ambiguo: el cliente nombro una coleccion sin especificar color
     if parsed.get("coleccion_ambigua"):
-        col = parsed["coleccion_ambigua"]
-        colores = parsed["colores_disponibles"]
-        # Quitar el prefijo de coleccion del nombre del color para chips mas limpios
-        col_norm = bs.normalizar(col)
-        chips = []
-        for c in colores:
-            cn = bs.normalizar(c)
-            if cn.startswith(col_norm):
-                chips.append({
-                    "ref": c,
-                    "label": c[len(col):].strip() or c,
-                })
-            else:
-                chips.append({"ref": c, "label": c})
-        mensaje = (
-            f"Has preguntado por **{col}** pero no me has dicho qué color. "
-            f"Tenemos {len(colores)} colores disponibles — dime cuál (o pulsa abajo)."
-        )
-        return jsonify({
-            "tipo": "necesita_color",
-            "mensaje": mensaje,
-            "filas": [],
-            "alternativas": None,
-            "chips_color": chips,
-            "consulta_original": {
-                "ancho": parsed.get("ancho"),
-                "largo": parsed.get("largo"),
-            },
-            "parsed": parsed,
-        })
+        return jsonify(_necesita_color_response(
+            parsed["coleccion_ambigua"], parsed["colores_disponibles"],
+            parsed.get("ancho"), parsed.get("largo"),
+        ))
 
     out = _ejecutar_consulta(parsed["ref"], parsed["ancho"], parsed["largo"])
     if out is None:
