@@ -60,8 +60,10 @@
       "title": "Verfügbare Stücke für Ihre Anfrage",
       "empty_initial": "Stellen Sie eine Anfrage, um verfügbare Stücke zu sehen.",
       "empty_no_match": "Keine Stücke entsprechen den Kriterien.",
-      "showing_one": "1 Stück angezeigt",
-      "showing_other": "{count} Stücke angezeigt",
+      "showing": {
+        "one": "1 Stück angezeigt",
+        "other": "{count} Stücke angezeigt"
+      },
       "view_all": "Alle anzeigen →",
       "col_descripcion": "Beschreibung",
       "col_lote": "Chargen-Nr.",
@@ -78,8 +80,10 @@
       "title": "Alternativen, falls der Kunde zustimmt",
       "tier1_header": "Tier I · gleiche Familie, anderes Design",
       "tier2_header": "Tier II · andere Konstruktion / ähnlicher Farbton",
-      "in_stock_one": "1 auf Lager",
-      "in_stock_other": "{count} auf Lager",
+      "in_stock": {
+        "one": "1 auf Lager",
+        "other": "{count} auf Lager"
+      },
       "no_stock_for_size": "kein Lagerbestand für diese Größe",
       "col_lote": "Charge",
       "col_ancho": "Breite",
@@ -96,9 +100,11 @@
       "Planif. en firme": "FEST GEPLANT"
     },
     "dropdown": {
-      "result_count_zero": "Keine Ergebnisse",
-      "result_count_one": "1 Referenz",
-      "result_count_other": "{count} Referenzen",
+      "result_count": {
+        "zero": "Keine Ergebnisse",
+        "one": "1 Referenz",
+        "other": "{count} Referenzen"
+      },
       "empty": "Keine Treffer für diese Suche."
     }
   },

@@ -60,8 +60,10 @@
       "title": "Pezzi disponibili per la tua richiesta",
       "empty_initial": "Lancia una richiesta per vedere i pezzi disponibili.",
       "empty_no_match": "Nessun pezzo soddisfa i criteri.",
-      "showing_one": "1 pezzo mostrato",
-      "showing_other": "{count} pezzi mostrati",
+      "showing": {
+        "one": "1 pezzo mostrato",
+        "other": "{count} pezzi mostrati"
+      },
       "view_all": "Vedi tutti →",
       "col_descripcion": "Descrizione",
       "col_lote": "N° lotto",
@@ -78,8 +80,10 @@
       "title": "Alternative se il cliente accetta",
       "tier1_header": "Tier I · stessa famiglia, altro design",
       "tier2_header": "Tier II · altra costruzione / colore simile",
-      "in_stock_one": "1 in stock",
-      "in_stock_other": "{count} in stock",
+      "in_stock": {
+        "one": "1 in stock",
+        "other": "{count} in stock"
+      },
       "no_stock_for_size": "non disponibile per questa misura",
       "col_lote": "Lotto",
       "col_ancho": "Larghezza",
@@ -96,9 +100,11 @@
       "Planif. en firme": "PIANIFICATO"
     },
     "dropdown": {
-      "result_count_zero": "Nessun risultato",
-      "result_count_one": "1 referenza",
-      "result_count_other": "{count} referenze",
+      "result_count": {
+        "zero": "Nessun risultato",
+        "one": "1 referenza",
+        "other": "{count} referenze"
+      },
       "empty": "Nessun risultato per questa ricerca."
     }
   },

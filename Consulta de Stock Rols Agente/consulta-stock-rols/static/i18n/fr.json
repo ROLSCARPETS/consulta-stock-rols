@@ -60,8 +60,10 @@
       "title": "Pièces disponibles pour votre recherche",
       "empty_initial": "Lancez une requête pour voir les pièces disponibles.",
       "empty_no_match": "Aucune pièce ne correspond aux critères.",
-      "showing_one": "1 pièce affichée",
-      "showing_other": "{count} pièces affichées",
+      "showing": {
+        "one": "1 pièce affichée",
+        "other": "{count} pièces affichées"
+      },
       "view_all": "Tout voir →",
       "col_descripcion": "Description",
       "col_lote": "N° de lot",
@@ -78,8 +80,10 @@
       "title": "Alternatives si le client accepte",
       "tier1_header": "Tier I · même famille, autre design",
       "tier2_header": "Tier II · autre construction / coloris similaire",
-      "in_stock_one": "1 en stock",
-      "in_stock_other": "{count} en stock",
+      "in_stock": {
+        "one": "1 en stock",
+        "other": "{count} en stock"
+      },
       "no_stock_for_size": "pas de stock pour cette dimension",
       "col_lote": "Lot",
       "col_ancho": "Largeur",
@@ -96,9 +100,11 @@
       "Planif. en firme": "PLANIFIÉ FERME"
     },
     "dropdown": {
-      "result_count_zero": "Aucun résultat",
-      "result_count_one": "1 référence",
-      "result_count_other": "{count} références",
+      "result_count": {
+        "zero": "Aucun résultat",
+        "one": "1 référence",
+        "other": "{count} références"
+      },
       "empty": "Aucune correspondance pour cette recherche."
     }
   },

@@ -60,8 +60,10 @@
       "title": "Pieces available for your query",
       "empty_initial": "Launch a query to see available pieces.",
       "empty_no_match": "No pieces meet the criteria.",
-      "showing_one": "Showing 1 piece",
-      "showing_other": "Showing {count} pieces",
+      "showing": {
+        "one": "Showing 1 piece",
+        "other": "Showing {count} pieces"
+      },
       "view_all": "View all →",
       "col_descripcion": "Description",
       "col_lote": "Batch No.",
@@ -78,8 +80,10 @@
       "title": "Alternatives if the customer accepts",
       "tier1_header": "Tier I · same family, different design",
       "tier2_header": "Tier II · different construction / similar tone",
-      "in_stock_one": "1 in stock",
-      "in_stock_other": "{count} in stock",
+      "in_stock": {
+        "one": "1 in stock",
+        "other": "{count} in stock"
+      },
       "no_stock_for_size": "no stock for this size",
       "col_lote": "Batch",
       "col_ancho": "Width",
@@ -96,9 +100,11 @@
       "Planif. en firme": "PLANNED FIRM"
     },
     "dropdown": {
-      "result_count_zero": "No results",
-      "result_count_one": "1 reference",
-      "result_count_other": "{count} references",
+      "result_count": {
+        "zero": "No results",
+        "one": "1 reference",
+        "other": "{count} references"
+      },
       "empty": "No matches for that search."
     }
   },

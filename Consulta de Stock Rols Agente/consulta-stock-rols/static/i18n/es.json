@@ -60,8 +60,10 @@
       "title": "Piezas disponibles para completar la consulta",
       "empty_initial": "Lanza una consulta para ver las piezas disponibles.",
       "empty_no_match": "No hay piezas que cumplan los criterios.",
-      "showing_one": "Mostrando 1 pieza",
-      "showing_other": "Mostrando {count} piezas",
+      "showing": {
+        "one": "Mostrando 1 pieza",
+        "other": "Mostrando {count} piezas"
+      },
       "view_all": "Ver todas →",
       "col_descripcion": "Descripción",
       "col_lote": "Nº Lote",
@@ -78,8 +80,10 @@
       "title": "Alternativas si el cliente acepta",
       "tier1_header": "Tier I · misma familia, otro diseño",
       "tier2_header": "Tier II · otra construcción / colorido similar",
-      "in_stock_one": "1 en stock",
-      "in_stock_other": "{count} en stock",
+      "in_stock": {
+        "one": "1 en stock",
+        "other": "{count} en stock"
+      },
       "no_stock_for_size": "sin stock para esta medida",
       "col_lote": "Lote",
       "col_ancho": "Ancho",
@@ -96,9 +100,11 @@
       "Planif. en firme": "PLANIF. EN FIRME"
     },
     "dropdown": {
-      "result_count_zero": "Sin resultados",
-      "result_count_one": "1 referencia",
-      "result_count_other": "{count} referencias",
+      "result_count": {
+        "zero": "Sin resultados",
+        "one": "1 referencia",
+        "other": "{count} referencias"
+      },
       "empty": "No encontramos nada con esa búsqueda."
     }
   },

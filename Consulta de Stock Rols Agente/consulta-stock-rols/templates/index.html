@@ -745,7 +745,7 @@ function renderRefDropdown(query) {
     }
   }
   refResultCount.textContent =
-    total === 0 ? t('ui.dropdown.result_count_zero') :
+    total === 0 ? t('ui.dropdown.result_count.zero') :
     tCount('ui.dropdown.result_count', total);
   if (total === 0) {
     refDropdownList.innerHTML = `<div class="ref-empty">${escapeHtml(t('ui.dropdown.empty'))}</div>`;

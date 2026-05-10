@@ -60,8 +60,10 @@
       "title": "Beschikbare stukken voor uw zoekopdracht",
       "empty_initial": "Stel een vraag om beschikbare stukken te zien.",
       "empty_no_match": "Geen stukken voldoen aan de criteria.",
-      "showing_one": "1 stuk weergegeven",
-      "showing_other": "{count} stukken weergegeven",
+      "showing": {
+        "one": "1 stuk weergegeven",
+        "other": "{count} stukken weergegeven"
+      },
       "view_all": "Alles bekijken →",
       "col_descripcion": "Omschrijving",
       "col_lote": "Partijnr.",
@@ -78,8 +80,10 @@
       "title": "Alternatieven als de klant akkoord gaat",
       "tier1_header": "Tier I · zelfde familie, ander design",
       "tier2_header": "Tier II · andere constructie / vergelijkbare kleur",
-      "in_stock_one": "1 op voorraad",
-      "in_stock_other": "{count} op voorraad",
+      "in_stock": {
+        "one": "1 op voorraad",
+        "other": "{count} op voorraad"
+      },
       "no_stock_for_size": "geen voorraad voor deze maat",
       "col_lote": "Partij",
       "col_ancho": "Breedte",
@@ -96,9 +100,11 @@
       "Planif. en firme": "VAST GEPLAND"
     },
     "dropdown": {
-      "result_count_zero": "Geen resultaten",
-      "result_count_one": "1 referentie",
-      "result_count_other": "{count} referenties",
+      "result_count": {
+        "zero": "Geen resultaten",
+        "one": "1 referentie",
+        "other": "{count} referenties"
+      },
       "empty": "Geen resultaten voor deze zoekopdracht."
     }
   },
