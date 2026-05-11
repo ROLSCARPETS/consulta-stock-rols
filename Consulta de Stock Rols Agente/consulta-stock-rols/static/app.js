@@ -1,7 +1,7 @@
 // ============================================================
 // i18n
 // ============================================================
-const SUPPORTED_LANGS = ['es', 'en', 'fr', 'de', 'it', 'nl'];
+const SUPPORTED_LANGS = ['es', 'en', 'fr', 'de', 'it', 'nl', 'pt', 'pl'];
 let CURRENT_LANG = (() => {
   const saved = localStorage.getItem('app-lang');
   return (saved && SUPPORTED_LANGS.includes(saved)) ? saved : 'es';

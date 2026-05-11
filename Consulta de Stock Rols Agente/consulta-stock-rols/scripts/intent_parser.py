@@ -55,6 +55,7 @@ def _get_client():
 LANG_NAMES = {
     "es": "espanol", "en": "english", "fr": "francais",
     "de": "aleman", "it": "italiano", "nl": "neerlandes",
+    "pt": "portugues", "pl": "polaco",
 }
 
 

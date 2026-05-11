@@ -95,7 +95,7 @@ for _desc in DESCRIPCIONES_ACTIVAS:
 
 I18N_DIR = APP_DIR / "static" / "i18n"
 DEFAULT_LANG = "es"
-SUPPORTED_LANGS = ["es", "en", "fr", "de", "it", "nl"]
+SUPPORTED_LANGS = ["es", "en", "fr", "de", "it", "nl", "pt", "pl"]
 TRANSLATIONS: dict = {}
 for _f in I18N_DIR.glob("*.json"):
     try:
