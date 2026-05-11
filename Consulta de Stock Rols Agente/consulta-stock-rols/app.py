@@ -89,6 +89,16 @@ for _desc in DESCRIPCIONES_ACTIVAS:
     _col = DESC_TO_COLECCION[_desc]
     COLECCION_TO_DESCS_ACTIVAS.setdefault(_col, []).append(_desc)
 
+# Filtrar piezas legacy en memoria: solo conservar piezas cuya descripcion
+# pertenece a una coleccion del catalogo actual. Acelera busquedas y evita
+# que aparezcan refs descontinuadas (Annabelle III, Castor Plus, etc.).
+_piezas_antes = len(PIEZAS)
+PIEZAS = [p for p in PIEZAS if p.descripcion in DESC_TO_COLECCION]
+print(f"  -> {len(PIEZAS)} piezas en colecciones activas (de {_piezas_antes})")
+_piezas_fab_antes = len(PIEZAS_FAB)
+PIEZAS_FAB = [p for p in PIEZAS_FAB if p.descripcion in DESC_TO_COLECCION]
+print(f"  -> {len(PIEZAS_FAB)} piezas fabricacion activas (de {_piezas_fab_antes})")
+
 # ---------------------------------------------------------------------------
 # Traducciones (i18n)
 # ---------------------------------------------------------------------------
