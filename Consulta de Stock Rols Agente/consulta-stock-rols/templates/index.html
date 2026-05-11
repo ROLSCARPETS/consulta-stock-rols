@@ -6,6 +6,7 @@
 <title>Consulta de stock — Rols</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
 </head>
 <body class="min-h-screen">
@@ -15,7 +16,7 @@
   <!-- ======================== SIDEBAR ======================== -->
   <aside class="sidebar w-64 flex-shrink-0 flex flex-col px-4 py-6">
     <div class="px-2 mb-8">
-      <div class="text-2xl font-bold tracking-wider text-stone-100">ROLS</div>
+      <img src="{{ url_for('static', filename='logo-rols.png') }}" alt="Rols" class="rols-logo" />
     </div>
 
     <nav class="space-y-1 flex-grow">
@@ -35,12 +36,12 @@
     <div class="lang-block">
       <span class="lang-label" data-i18n="ui.sidebar.language">Idioma</span>
       <div class="lang-buttons">
-        <button class="lang-btn" data-lang="es" title="Español"><span class="flag">🇪🇸</span><span class="code">ES</span></button>
-        <button class="lang-btn" data-lang="en" title="English"><span class="flag">🇬🇧</span><span class="code">EN</span></button>
-        <button class="lang-btn" data-lang="fr" title="Français"><span class="flag">🇫🇷</span><span class="code">FR</span></button>
-        <button class="lang-btn" data-lang="de" title="Deutsch"><span class="flag">🇩🇪</span><span class="code">DE</span></button>
-        <button class="lang-btn" data-lang="it" title="Italiano"><span class="flag">🇮🇹</span><span class="code">IT</span></button>
-        <button class="lang-btn" data-lang="nl" title="Nederlands"><span class="flag">🇳🇱</span><span class="code">NL</span></button>
+        <button class="lang-btn" data-lang="es" title="Español"><span class="fi fi-es"></span><span class="code">ES</span></button>
+        <button class="lang-btn" data-lang="en" title="English"><span class="fi fi-gb"></span><span class="code">EN</span></button>
+        <button class="lang-btn" data-lang="fr" title="Français"><span class="fi fi-fr"></span><span class="code">FR</span></button>
+        <button class="lang-btn" data-lang="de" title="Deutsch"><span class="fi fi-de"></span><span class="code">DE</span></button>
+        <button class="lang-btn" data-lang="it" title="Italiano"><span class="fi fi-it"></span><span class="code">IT</span></button>
+        <button class="lang-btn" data-lang="nl" title="Nederlands"><span class="fi fi-nl"></span><span class="code">NL</span></button>
       </div>
     </div>
 
