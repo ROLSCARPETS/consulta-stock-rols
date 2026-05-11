@@ -818,7 +818,7 @@ def api_consulta_nl():
 if __name__ == "__main__":
     print()
     print("=" * 60)
-    print("  Consulta de Stock Rols — http://localhost:5000")
+    print("  Consulta de Stock Rols — http://localhost:5050")
     print("=" * 60)
     print()
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host="127.0.0.1", port=5050, debug=False)

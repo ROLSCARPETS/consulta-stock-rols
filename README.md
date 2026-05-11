@@ -1,7 +1,7 @@
 # Consulta de Stock Rols
 
 App web local para consultar el stock de alfombras y moquetas de Rols
-Carpets. Levanta un servidor Flask en `http://localhost:5000` con un panel
+Carpets. Levanta un servidor Flask en `http://localhost:5050` con un panel
 tipo Rols: sidebar de navegación, búsqueda guiada por formulario y chat en
 lenguaje natural con tabla de resultados.
 
@@ -74,7 +74,7 @@ Consulta de Stock Rols Agente/Iniciar Consulta de Stock.bat
 
 El `.bat` comprueba Python, instala las dependencias que falten (Flask,
 openpyxl, openai, python-dotenv), arranca el servidor y abre el navegador
-en `http://localhost:5000`.
+en `http://localhost:5050`.
 
 ### Opción 2 — Manual
 
@@ -84,7 +84,7 @@ pip install flask openpyxl openai python-dotenv
 python app.py
 ```
 
-Luego abre `http://localhost:5000` en el navegador.
+Luego abre `http://localhost:5050` en el navegador.
 
 ## Estructura del proyecto
 

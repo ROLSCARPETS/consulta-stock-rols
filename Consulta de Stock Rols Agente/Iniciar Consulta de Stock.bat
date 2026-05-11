@@ -61,9 +61,9 @@ if errorlevel 1 (
 )
 
 REM Abrir el navegador en 3s (en paralelo al arranque del servidor)
-start "" /min cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:5000"
+start "" /min cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:5050"
 
-echo Arrancando servidor en http://localhost:5000 ...
+echo Arrancando servidor en http://localhost:5050 ...
 echo.
 echo --- Para DETENER la app, cierra esta ventana o pulsa Ctrl+C ---
 echo.
