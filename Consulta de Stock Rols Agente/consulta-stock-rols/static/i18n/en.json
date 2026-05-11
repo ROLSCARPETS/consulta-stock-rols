@@ -51,7 +51,8 @@
       "submit": "Send →",
       "user_avatar": "YOU",
       "ai_avatar": "AI",
-      "ai_initial": "You'll see the assistant's response here once you launch a query. You can use the form or type in natural language."
+      "ai_initial": "You'll see the assistant's response here once you launch a query. You can use the form or type in natural language.",
+      "mic_tooltip": "Click to dictate"
     },
     "search_context": {
       "label": "Active search",

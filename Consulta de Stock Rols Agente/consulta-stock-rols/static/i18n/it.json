@@ -51,7 +51,8 @@
       "submit": "Invia →",
       "user_avatar": "TU",
       "ai_avatar": "IA",
-      "ai_initial": "Qui vedrai la risposta dell'assistente quando lanci una richiesta. Puoi usare il modulo o scrivere in linguaggio naturale."
+      "ai_initial": "Qui vedrai la risposta dell'assistente quando lanci una richiesta. Puoi usare il modulo o scrivere in linguaggio naturale.",
+      "mic_tooltip": "Clicca per dettare"
     },
     "search_context": {
       "label": "Ricerca attiva",

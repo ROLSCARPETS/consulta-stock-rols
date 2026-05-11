@@ -51,7 +51,8 @@
       "submit": "Envoyer →",
       "user_avatar": "VOUS",
       "ai_avatar": "IA",
-      "ai_initial": "Vous verrez la réponse de l'assistant ici dès que vous lancerez une requête. Utilisez le formulaire ou écrivez en langage naturel."
+      "ai_initial": "Vous verrez la réponse de l'assistant ici dès que vous lancerez une requête. Utilisez le formulaire ou écrivez en langage naturel.",
+      "mic_tooltip": "Cliquez pour dicter"
     },
     "search_context": {
       "label": "Recherche active",

@@ -621,6 +621,58 @@ formGuiada.addEventListener('submit', e => {
   closeRefDropdown();
 });
 
+// ============================================================
+// Dictado por voz (Web Speech API)
+// Solo disponible en Chrome/Edge. Firefox/Safari no soportan o solo
+// parcialmente — en ese caso el boton se oculta.
+// ============================================================
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const micBtn = document.getElementById('btn-mic');
+const nlQuery = document.getElementById('nl-query');
+const LANG_TO_LOCALE = {
+  es: 'es-ES', en: 'en-GB', fr: 'fr-FR', de: 'de-DE',
+  it: 'it-IT', nl: 'nl-NL', pt: 'pt-PT', pl: 'pl-PL',
+};
+let speechRecognition = null;
+let speechListening = false;
+
+if (!SR) {
+  if (micBtn) micBtn.classList.add('unsupported');
+} else if (micBtn) {
+  speechRecognition = new SR();
+  speechRecognition.continuous = false;
+  speechRecognition.interimResults = false;
+  speechRecognition.maxAlternatives = 1;
+  speechRecognition.onresult = (e) => {
+    const text = e.results[0][0].transcript || '';
+    if (text) {
+      nlQuery.value = (nlQuery.value ? nlQuery.value + ' ' : '') + text;
+    }
+    nlQuery.focus();
+  };
+  speechRecognition.onend = () => {
+    speechListening = false;
+    micBtn.classList.remove('listening');
+  };
+  speechRecognition.onerror = (e) => {
+    console.warn('[speech] error:', e.error);
+    speechListening = false;
+    micBtn.classList.remove('listening');
+  };
+  micBtn.addEventListener('click', () => {
+    if (!speechRecognition) return;
+    if (speechListening) { speechRecognition.stop(); return; }
+    speechRecognition.lang = LANG_TO_LOCALE[CURRENT_LANG] || 'es-ES';
+    try {
+      speechRecognition.start();
+      speechListening = true;
+      micBtn.classList.add('listening');
+    } catch (err) {
+      console.warn('[speech] start failed:', err);
+    }
+  });
+}
+
 formNL.addEventListener('submit', e => {
   e.preventDefault();
   const inputEl = document.getElementById('nl-query');

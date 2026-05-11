@@ -51,7 +51,8 @@
       "submit": "Verzenden →",
       "user_avatar": "U",
       "ai_avatar": "AI",
-      "ai_initial": "Hier ziet u het antwoord van de assistent zodra u een vraag stelt. Gebruik het formulier of typ in natuurlijke taal."
+      "ai_initial": "Hier ziet u het antwoord van de assistent zodra u een vraag stelt. Gebruik het formulier of typ in natuurlijke taal.",
+      "mic_tooltip": "Klik om te dicteren"
     },
     "search_context": {
       "label": "Actieve zoekopdracht",

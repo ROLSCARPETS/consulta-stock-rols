@@ -51,7 +51,8 @@
       "submit": "Wyślij →",
       "user_avatar": "TY",
       "ai_avatar": "AI",
-      "ai_initial": "Tutaj zobaczysz odpowiedź asystenta po wysłaniu zapytania. Możesz użyć formularza lub napisać językiem naturalnym."
+      "ai_initial": "Tutaj zobaczysz odpowiedź asystenta po wysłaniu zapytania. Możesz użyć formularza lub napisać językiem naturalnym.",
+      "mic_tooltip": "Kliknij, aby dyktować"
     },
     "search_context": {
       "label": "Aktywne wyszukiwanie",

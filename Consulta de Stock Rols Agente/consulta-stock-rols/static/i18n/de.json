@@ -51,7 +51,8 @@
       "submit": "Senden →",
       "user_avatar": "SIE",
       "ai_avatar": "KI",
-      "ai_initial": "Hier erscheint die Antwort des Assistenten, sobald Sie eine Anfrage stellen. Sie können das Formular nutzen oder in natürlicher Sprache schreiben."
+      "ai_initial": "Hier erscheint die Antwort des Assistenten, sobald Sie eine Anfrage stellen. Sie können das Formular nutzen oder in natürlicher Sprache schreiben.",
+      "mic_tooltip": "Zum Diktieren klicken"
     },
     "search_context": {
       "label": "Aktive Suche",

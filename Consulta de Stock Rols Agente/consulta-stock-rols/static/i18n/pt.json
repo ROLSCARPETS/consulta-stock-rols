@@ -51,7 +51,8 @@
       "submit": "Enviar →",
       "user_avatar": "EU",
       "ai_avatar": "IA",
-      "ai_initial": "Aqui verá a resposta do assistente quando lançar uma consulta. Pode usar o formulário ou escrever em linguagem natural."
+      "ai_initial": "Aqui verá a resposta do assistente quando lançar uma consulta. Pode usar o formulário ou escrever em linguagem natural.",
+      "mic_tooltip": "Clique para ditar"
     },
     "search_context": {
       "label": "Pesquisa ativa",
