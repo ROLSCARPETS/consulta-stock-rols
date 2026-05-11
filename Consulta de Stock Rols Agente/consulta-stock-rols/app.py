@@ -10,9 +10,11 @@ Usa scripts/buscar_stock.py como motor.
 from __future__ import annotations
 
 import json
+import logging
 import re
 import sys
 import time
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -25,6 +27,19 @@ import buscar_stock as bs  # noqa: E402
 import intent_parser  # noqa: E402
 
 
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%H:%M:%S",
+)
+# Silenciar el log de cada request de Flask (lo loggeamos nosotros con timing)
+logging.getLogger("werkzeug").setLevel(logging.WARNING)
+log = logging.getLogger("rols")
+
+
 app = Flask(__name__)
 # Recargar plantillas en caliente sin reiniciar el servidor
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -34,24 +49,24 @@ app.jinja_env.auto_reload = True
 # Carga inicial de datos (una sola vez al arrancar)
 # ---------------------------------------------------------------------------
 
-print("Cargando stock terminado…")
+log.info("Cargando stock terminado…")
 PIEZAS = bs.cargar_piezas(bs.DEFAULT_EXCEL)
-print(f"  -> {len(PIEZAS)} piezas")
+log.info(f"  -> {len(PIEZAS)} piezas")
 
-print("Cargando piezas en fabricación…")
+log.info("Cargando piezas en fabricación…")
 try:
     PIEZAS_FAB = bs.cargar_piezas_fabricacion(bs.DEFAULT_EXCEL_FABRICACION)
-    print(f"  -> {len(PIEZAS_FAB)} piezas")
+    log.info(f"  -> {len(PIEZAS_FAB)} piezas")
 except FileNotFoundError:
     PIEZAS_FAB = []
 
-print("Cargando colecciones y alternativas…")
+log.info("Cargando colecciones y alternativas…")
 COLECCIONES = bs.cargar_colecciones()
 ALTERNATIVAS = bs.cargar_alternativas()
-print(f"  -> {len(COLECCIONES)} colecciones, {len(ALTERNATIVAS)} colores con alternativas")
+log.info(f"  -> {len(COLECCIONES)} colecciones, {len(ALTERNATIVAS)} colores con alternativas")
 
 DESCRIPCIONES = sorted({p.descripcion for p in PIEZAS} | {p.descripcion for p in PIEZAS_FAB})
-print(f"  -> {len(DESCRIPCIONES)} referencias unicas")
+log.info(f"  -> {len(DESCRIPCIONES)} referencias unicas")
 
 
 # Lista (coleccion, normalizada) ordenada de mas larga a mas corta. Permite
@@ -81,7 +96,7 @@ for _desc in DESCRIPCIONES:
 
 # Solo descripciones cuya coleccion esta en el catalogo activo.
 DESCRIPCIONES_ACTIVAS = sorted(DESC_TO_COLECCION.keys())
-print(f"  -> {len(DESCRIPCIONES_ACTIVAS)} referencias activas (en catalogo)")
+log.info(f"  -> {len(DESCRIPCIONES_ACTIVAS)} referencias activas (en catalogo)")
 
 # Map inverso pre-computado: coleccion -> lista de descripciones activas.
 COLECCION_TO_DESCS_ACTIVAS: dict[str, list[str]] = {}
@@ -94,10 +109,10 @@ for _desc in DESCRIPCIONES_ACTIVAS:
 # que aparezcan refs descontinuadas (Annabelle III, Castor Plus, etc.).
 _piezas_antes = len(PIEZAS)
 PIEZAS = [p for p in PIEZAS if p.descripcion in DESC_TO_COLECCION]
-print(f"  -> {len(PIEZAS)} piezas en colecciones activas (de {_piezas_antes})")
+log.info(f"  -> {len(PIEZAS)} piezas en colecciones activas (de {_piezas_antes})")
 _piezas_fab_antes = len(PIEZAS_FAB)
 PIEZAS_FAB = [p for p in PIEZAS_FAB if p.descripcion in DESC_TO_COLECCION]
-print(f"  -> {len(PIEZAS_FAB)} piezas fabricacion activas (de {_piezas_fab_antes})")
+log.info(f"  -> {len(PIEZAS_FAB)} piezas fabricacion activas (de {_piezas_fab_antes})")
 
 # ---------------------------------------------------------------------------
 # Traducciones (i18n)
@@ -111,8 +126,8 @@ for _f in I18N_DIR.glob("*.json"):
     try:
         TRANSLATIONS[_f.stem] = json.loads(_f.read_text(encoding="utf-8"))
     except Exception as _e:
-        print(f"[i18n] error cargando {_f.name}: {_e}")
-print(f"Traducciones cargadas: {sorted(TRANSLATIONS.keys())}")
+        log.info(f"[i18n] error cargando {_f.name}: {_e}")
+log.info(f"Traducciones cargadas: {sorted(TRANSLATIONS.keys())}")
 
 
 def _lookup_key(key: str, lang: str):
@@ -186,6 +201,45 @@ def _get_lang() -> str:
 
 
 LOAD_TIME = time.time()
+
+
+# ---------------------------------------------------------------------------
+# Metricas en memoria (se resetean al reiniciar). Endpoint /metrics las expone.
+# ---------------------------------------------------------------------------
+
+METRICS = {
+    "started_at": datetime.now().isoformat(timespec="seconds"),
+    "requests_by_endpoint": Counter(),
+    "response_tipos": Counter(),     # stock / fabricacion / sin_stock / medida_invalida / etc.
+    "intents_ai": Counter(),         # intents que la IA detecto
+    "ai_dispatched": 0,              # respuesta servida por la IA
+    "ai_fallback": 0,                # la IA fallo, cayo al regex
+    "errors_4xx": 0,
+    "errors_5xx": 0,
+}
+
+
+@app.before_request
+def _track_request_start():
+    request._t0 = time.monotonic()
+
+
+@app.after_request
+def _track_request_end(response):
+    elapsed_ms = (time.monotonic() - getattr(request, "_t0", time.monotonic())) * 1000
+    endpoint = request.endpoint or "?"
+    METRICS["requests_by_endpoint"][endpoint] += 1
+    if 400 <= response.status_code < 500:
+        METRICS["errors_4xx"] += 1
+    elif response.status_code >= 500:
+        METRICS["errors_5xx"] += 1
+    # Solo loggear endpoints de API (no static ni la pagina principal)
+    if endpoint and endpoint.startswith("api_"):
+        log.info(
+            "%s %s -> %d (%.0fms)",
+            request.method, request.path, response.status_code, elapsed_ms,
+        )
+    return response
 
 
 # ---------------------------------------------------------------------------
@@ -545,7 +599,9 @@ def _try_ai_dispatch(query: str, last_ref: str | None, lang: str = DEFAULT_LANG)
         lang=lang,
     )
     if not ai:
+        METRICS["ai_fallback"] += 1
         return None
+    METRICS["intents_ai"][ai.get("intent") or "?"] += 1
 
     intent = ai.get("intent")
     ref = ai.get("ref")
@@ -628,6 +684,27 @@ def index():
                            sync_time=datetime.fromtimestamp(LOAD_TIME).strftime("%H:%M"))
 
 
+@app.route("/metrics")
+def api_metrics():
+    """Metricas en memoria. Util para ver uso real (cuantas consultas, que
+    intent acerto la IA, % fallback, etc.). Se resetean al reiniciar Flask."""
+    uptime_s = int(time.time() - LOAD_TIME)
+    ai_calls = METRICS["ai_dispatched"] + METRICS["ai_fallback"]
+    ai_hit_rate = (METRICS["ai_dispatched"] / ai_calls) if ai_calls > 0 else None
+    return jsonify({
+        "started_at": METRICS["started_at"],
+        "uptime_seconds": uptime_s,
+        "requests_by_endpoint": dict(METRICS["requests_by_endpoint"]),
+        "response_tipos": dict(METRICS["response_tipos"]),
+        "intents_ai": dict(METRICS["intents_ai"]),
+        "ai_dispatched": METRICS["ai_dispatched"],
+        "ai_fallback": METRICS["ai_fallback"],
+        "ai_hit_rate": ai_hit_rate,
+        "errors_4xx": METRICS["errors_4xx"],
+        "errors_5xx": METRICS["errors_5xx"],
+    })
+
+
 @app.route("/api/refs")
 def api_refs():
     """Solo referencias activas (cuya coleccion esta en colecciones.json).
@@ -679,7 +756,17 @@ def api_consulta():
         if largo is not None:
             largo = largo / 100
 
-    return jsonify(_ejecutar_consulta(ref, ancho, largo, lang))
+    out = _ejecutar_consulta(ref, ancho, largo, lang)
+    _track_tipo(out)
+    return jsonify(out)
+
+
+def _track_tipo(response_data):
+    """Incrementa el contador del tipo de respuesta para metricas."""
+    if isinstance(response_data, dict):
+        tipo = response_data.get("tipo")
+        if tipo:
+            METRICS["response_tipos"][tipo] += 1
 
 
 @app.route("/api/consulta-nl", methods=["POST"])
@@ -694,6 +781,8 @@ def api_consulta_nl():
     # 1) Intentar primero con IA (gpt-4o-mini).
     ai_response = _try_ai_dispatch(query, last_ref, lang)
     if ai_response is not None:
+        METRICS["ai_dispatched"] += 1
+        _track_tipo(ai_response)
         return jsonify(ai_response)
 
     # 2) Fallback: meta-pregunta por regex.
@@ -703,21 +792,26 @@ def api_consulta_nl():
         if not col and last_ref:
             col = _coleccion_de_descripcion(last_ref)
         if col:
-            return jsonify(_lista_colores_response(col, lang))
+            resp = _lista_colores_response(col, lang)
+            _track_tipo(resp)
+            return jsonify(resp)
 
     # 3) Fallback: parser de regex.
     parsed = parse_natural_query(query, last_ref=last_ref)
 
     if parsed.get("coleccion_ambigua"):
-        return jsonify(_necesita_color_response(
+        resp = _necesita_color_response(
             parsed["coleccion_ambigua"], parsed["colores_disponibles"],
             parsed.get("ancho"), parsed.get("largo"), lang,
-        ))
+        )
+        _track_tipo(resp)
+        return jsonify(resp)
 
     out = _ejecutar_consulta(parsed["ref"], parsed["ancho"], parsed["largo"], lang)
     if out is None:
         return jsonify({"error": t("msg.errors.could_not_understand", lang)}), 400
     out["parsed"] = parsed
+    _track_tipo(out)
     return jsonify(out)
 
 
