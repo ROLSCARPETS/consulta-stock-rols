@@ -65,6 +65,25 @@ COLECCIONES = bs.cargar_colecciones()
 ALTERNATIVAS = bs.cargar_alternativas()
 log.info(f"  -> {len(COLECCIONES)} colecciones, {len(ALTERNATIVAS)} colores con alternativas")
 
+# Referencias excluidas manualmente del catalogo (decisiones de marketing /
+# comercial). Se quitan al cargar para que no aparezcan en busquedas, dropdown,
+# respuestas de la IA ni alternativas. Si una ref aqui no existe en los Excel,
+# simplemente no afecta a nada.
+REFS_EXCLUIDAS = {
+    "ANNABELLE NX CUSTOM - OLD 853",
+    "ANNABELLE NX WHITE",
+    "SENSACION BLANCO 30",
+    "SENSACION GRIS OSCURO 98",
+    "SENSACION PLATA 95",
+    "TERRA MENORCA TALCO",
+    "ZENIT NX WHITE",
+}
+_excl_norm = {bs.normalizar(r) for r in REFS_EXCLUIDAS}
+_pre_total = len(PIEZAS) + len(PIEZAS_FAB)
+PIEZAS = [p for p in PIEZAS if bs.normalizar(p.descripcion) not in _excl_norm]
+PIEZAS_FAB = [p for p in PIEZAS_FAB if bs.normalizar(p.descripcion) not in _excl_norm]
+log.info(f"  -> Excluidas {_pre_total - len(PIEZAS) - len(PIEZAS_FAB)} piezas por REFS_EXCLUIDAS")
+
 DESCRIPCIONES = sorted({p.descripcion for p in PIEZAS} | {p.descripcion for p in PIEZAS_FAB})
 log.info(f"  -> {len(DESCRIPCIONES)} referencias unicas")
 
